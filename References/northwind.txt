@@ -1,0 +1,432 @@
+using Microsoft.AspNetCore.Mvc;
+using northwind.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+
+namespace northwind.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class WeatherForecastController : ControllerBase
+{
+  private static readonly string[] Summaries = new[]
+  {
+        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+    };
+
+  private readonly ILogger<WeatherForecastController> _logger;
+  private readonly NorthwindDbContext _context;
+
+  public WeatherForecastController(NorthwindDbContext context, ILogger<WeatherForecastController> logger)
+  {
+    _context = context;
+    _logger = logger;
+  }
+
+  [HttpGet(Name = "GetWeatherForecast")]
+  public IEnumerable<WeatherForecast> Get()
+  {
+    return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+    {
+      Date = DateTime.Now.AddDays(index),
+      TemperatureC = Random.Shared.Next(-20, 55),
+      Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+    })
+    .ToArray();
+  }
+
+  [HttpGet("test1")]
+  public async Task<ActionResult<dynamic>> TestQuery()
+  {
+
+    var qry1 = from e in _context.Employees
+               select new
+               {
+                 e.FirstName,
+                 e.LastName,
+                 e.City,
+                 e.CountryRegion
+               };
+
+    return await qry1.ToListAsync();
+  }
+
+  [HttpGet("test2")]
+  public async Task<ActionResult<dynamic>> TestQuery2()
+  {
+
+    var qry2 = from e in _context.Employees
+               where e.City == "Seattle"
+               select new
+               {
+                 e.FirstName,
+                 e.LastName,
+                 e.City,
+                 e.CountryRegion
+               };
+    return await qry2.ToListAsync();
+  }
+
+  [HttpGet("test3")]
+  public async Task<ActionResult<dynamic>> TestQuery3()
+  {
+    var qry3 = from ord in _context.Orders
+               join ordd in _context.OrderDetails on ord.Id equals ordd.OrderId
+               select new
+               {
+                 ord.Id,
+                 ord.OrderDate,
+                 ord.ShipName,
+                 ordd.Quantity,
+                 ordd.UnitPrice,
+                 Amount = (ordd.Quantity * ordd.UnitPrice)
+               };
+    return await qry3.ToListAsync();
+  }
+  [HttpGet("test4")]
+  public async Task<ActionResult<dynamic>> TestQuery4()
+  {
+
+    var qry4 = from ord in _context.Orders
+               join ordd in _context.OrderDetails on ord.Id equals ordd.OrderId
+               group ordd by new { ord.Id, ord.OrderDate, ord.ShipName } into ordg
+               orderby ordg.Key.OrderDate descending
+               select new
+               {
+                 ordg.Key.Id,
+                 ordg.Key.OrderDate,
+                 ordg.Key.ShipName,
+                 TotalAmount = ordg.Sum(x => x.Quantity * x.UnitPrice)
+               };
+    return await qry4.ToListAsync();
+  }
+
+  [HttpGet("test5")]
+  public async Task<ActionResult<dynamic>> TestQuery5()
+  {
+    var qry5 = from order in _context.Orders
+               orderby order.OrderDate descending
+               select new
+               {
+                 order.Id,
+                 order.OrderDate,
+                 order.ShipName,
+                 TotalAmount = (from ordd in order.OrderDetails select ordd.Quantity * ordd.UnitPrice).Sum()
+               };
+    return await qry5.ToListAsync();
+  }
+
+
+  [HttpGet("test6")]
+  public async Task<ActionResult<dynamic>> TestQuery6()
+  {
+    var qry6 = from emp in _context.Employees
+               join ord in _context.Orders on emp.Id equals ord.EmployeeId
+               where ord.ShipCity == "New York"
+               select new
+               {
+                 emp.Id,
+                 emp.FirstName,
+                 emp.LastName,
+                 emp.City,
+                 ord.ShipCity,
+                 emp.BusinessPhone,
+                 emp.CountryRegion,
+                 emp.Company,
+                 emp.EmailAddress
+               };
+    return await qry6.ToListAsync();
+
+  }
+
+
+  [HttpGet("test7")]
+  public async Task<ActionResult<dynamic>> TestQuery7()
+  {
+    var qry7 = from ord in _context.Orders
+               join cust in _context.Customers on ord.CustomerId equals cust.Id
+               join emp in _context.Employees on ord.EmployeeId equals emp.Id
+               join ship in _context.Shippers on ord.ShipperId equals ship.Id
+               where cust.City == "New York" && ship.Company == "Shipping Company A"
+               select new
+               {
+                 emp.FirstName,
+                 cust.LastName,
+                 ord.OrderDate,
+                 cust.City,
+                 ship.Company,
+
+               };
+    return await qry7.ToListAsync();
+  }
+
+  [HttpGet("test8")]
+  public async Task<ActionResult<dynamic>> TestQuery8()
+  {
+    var listProducts = new string[] { "NWTB-81", "NWTC-82" };
+
+    var qry8 = from emp in _context.Employees
+               join ord in _context.Orders on emp.Id equals ord.EmployeeId
+               join ordd in _context.OrderDetails on ord.Id equals ordd.OrderId
+               join p in _context.Products on ordd.ProductId equals p.Id
+               where listProducts.Contains(p.ProductCode)
+               orderby emp.FirstName
+               select new
+               {
+                 emp.FirstName,
+                 emp.LastName,
+                 p.ProductName,
+                 p.ProductCode
+               };
+
+    return await qry8.ToListAsync();
+  }
+
+
+  [HttpGet("test9")]
+  public async Task<ActionResult<dynamic>> TestQuery9()
+  {
+    var qry9 = from ord in _context.Orders
+               where (ord.OrderDate >= new DateTime(2006, 1, 1) && ord.OrderDate < new DateTime(2006, 2, 1))
+               orderby ord.OrderDate
+               select ord;
+    return await qry9.ToListAsync();
+  }
+
+  [HttpGet("test10")]
+  public async Task<ActionResult<dynamic>> TestQuery10()
+  {
+    var qry10 = from cus in _context.Customers
+                join ord in _context.Orders on cus.Id equals ord.CustomerId
+                group ord by new { cus.Id, cus.FirstName, cus.LastName } into d
+                orderby d.Key.Id
+                select new
+                {
+                  d.Key.Id,
+                  d.Key.FirstName,
+                  d.Key.LastName,
+                  count = d.Count(x => x != null)
+                };
+    return await qry10.ToListAsync();
+  }
+
+  [HttpGet("test11")]
+  public async Task<ActionResult<dynamic>> TestQuery11()
+  {
+    var qry11 = from ord in _context.Orders
+                where ord.OrderDate != null
+                group ord by new { ord.OrderDate.Month, ord.OrderDate.Year } into d
+                select new
+                {
+                  dt = string.Format("{0}/{1}", d.Key.Month, d.Key.Year),
+
+                  dtstring = (new DateTime(d.Key.Year, d.Key.Month, 1)).ToString("MMM/Y"),
+                  count = d.Count()
+                };
+    return await qry11.ToListAsync();
+  }
+
+  [HttpGet("test12")]
+  public async Task<ActionResult<dynamic>> TestQuery12()
+  {
+    //to edit
+    // var qry12 = from ordd in _context.OrderDetails
+    //             join inv in _context.InventoryTransactions
+    //             on new { ordd.OrderId, ordd.ProductId } equals new { OrderId = inv.CustomerOrderId, inv.ProductId }
+    //             select new(ordd.OrderId, ordd.ProductId, inv.Comments);
+    // return await qry12.ToListAsync();
+
+    var qry12 = from ordd in _context.OrderDetails
+                join inv in _context.InventoryTransactions
+                on new { ordd.OrderId, ordd.ProductId } equals new { OrderId = inv.CustomerOrderId, inv.ProductId }
+                select new { ordd.OrderId, ordd.ProductId, inv.Comments };
+    return await qry12.ToListAsync();
+
+  }
+
+  [HttpGet("test13")]
+  public async Task<ActionResult<dynamic>> TestQuery13()
+  {
+    var qry13 = from cus in _context.Customers
+                join ord in _context.Orders on cus.Id equals ord.CustomerId
+                group ord by new { cus.Id, cus.FirstName, cus.LastName } into g
+                orderby g.Key.Id
+                select new
+                {
+                  g.Key.Id,
+                  g.Key.FirstName,
+                  g.Key.LastName,
+                  count = g.Count(x => x != null)
+                };
+    return await qry13.ToListAsync();
+  }
+
+
+  [HttpGet("test114")]
+  public async Task<ActionResult<dynamic>> TestQuery14()
+  {
+    var qry14 = from cus in _context.Customers
+                join ord in _context.Orders on cus.Id equals ord.CustomerId into cusord
+                from cusordl in cusord.DefaultIfEmpty()
+                group cusordl by new { cus.Id, cus.FirstName, cus.LastName } into g
+                orderby g.Key.Id
+                select new
+                {
+                  g.Key.Id,
+                  g.Key.FirstName,
+                  g.Key.LastName,
+                  count = g.Count(x => x != null)//don't take if null
+                };
+    return await qry14.ToListAsync();
+  }
+
+
+
+  [HttpGet("test15")]
+  public async Task<ActionResult<dynamic>> TestQuery15()
+  {
+    var qry15 = from cus in _context.Customers
+                where (cus.City == "Seattle")
+                select new
+                {
+                  cus.Id,
+                  cus.FirstName,
+                  cus.LastName,
+                  cus.JobTitle,
+                  cus.City
+                };
+    return await qry15.ToListAsync();
+  }
+
+  [HttpGet("test16")]
+  public async Task<ActionResult<dynamic>> TestQuery16()
+  {
+    var qry16 = from cus in _context.Customers
+                join ord in _context.Orders on cus.Id equals ord.CustomerId
+                where ((ord.OrderDate >= new DateTime(2006, 3, 1) && ord.OrderDate < new DateTime(2006, 4, 1)) && cus.City == "Seattle")
+                orderby ord.EmployeeId
+                select new
+                {
+                  cus.FirstName,
+                  cus.LastName,
+                  cus.City,
+                  ord.OrderDate
+                };
+    return await qry16.ToListAsync();
+  }
+
+  [HttpGet("test17")]
+  public async Task<ActionResult<dynamic>> TestQuery17()
+  {
+    var qry17 = from ord in _context.Orders
+                join ship in _context.Shippers on ord.ShipperId equals ship.Id
+                group ord by new { ship.Id, ord.ShipName } into g
+                orderby g.Key.Id
+                select new
+                {
+                  g.Key.Id,
+                  g.Key.ShipName,
+                  count = g.Count(x => x != null)
+                };
+    return await qry17.ToListAsync();
+  }
+
+  [HttpGet("test18")]
+  public async Task<ActionResult<dynamic>> TestQuery18()
+  {
+    var qry18 = from ship in _context.Shippers
+                join ord in _context.Orders on ship.Id equals ord.ShipperId into ordship
+                from ordshipl in ordship.DefaultIfEmpty()
+                group ordshipl by new { ship.Id, ship.Company } into g
+                orderby g.Key.Id
+                select new
+                {
+                  g.Key.Id,
+                  g.Key.Company,
+                  count = g.Count(x => x != null)//don't take if null
+                };
+    return await qry18.ToListAsync();
+  }
+
+  [HttpGet("test19")]
+  public async Task<ActionResult<dynamic>> TestQuery19()
+  {
+    var qry19 = from ordd in _context.OrderDetails
+                join ord in _context.Orders on ordd.OrderId equals ord.Id
+                join pro in _context.Products on ordd.ProductId equals pro.Id
+                where ((ord.OrderDate >= new DateTime(2006, 3, 1) && ord.OrderDate < new DateTime(2006, 4, 1)) && pro.Category == "Beverages")
+                group ordd by new { ord.OrderDate, pro.Id, pro.ProductName, pro.Category } into ordg
+
+                select new
+                {
+                  ordg.Key.Id,
+                  ordg.Key.ProductName,
+                  ordg.Key.OrderDate,
+                  ordg.Key.Category,
+                  TotalAmount = ordg.Sum(x => x.Quantity * x.UnitPrice)
+                };
+    return await qry19.ToListAsync();
+  }
+
+
+  [HttpGet("test20")]
+  public async Task<ActionResult<dynamic>> TestQuer20()
+  {
+
+    var qry20 = from pro in _context.Products
+                join pur in _context.PurchaseOrderDetails on pro.Id equals pur.ProductId into propur
+                from propurl in propur.DefaultIfEmpty()
+                join ordd in _context.OrderDetails on pro.Id equals ordd.ProductId into prordd
+                from prorddl in prordd.DefaultIfEmpty()
+                group new { propurl, prorddl } by new { propurl.Quantity, pro.Id, pro.ProductName } into g
+                select new
+                {
+                  g.Key.Id,
+                  g.Key.ProductName,
+                  Totalbalance = g.Sum(x => (x.propurl.Quantity != null ? x.propurl.Quantity : 0) - (x.prorddl.Quantity != null ? x.prorddl.Quantity : 0))
+                };
+    return await qry20.ToListAsync();
+
+
+  }
+
+
+  // to edit
+  [HttpGet("test21")]
+  public async Task<ActionResult<dynamic>> TestQuery21()
+  {
+    var qry22 = from cus in _context.Customers
+                join ord in _context.Orders.Where(ord => ord.OrderDate >= new DateTime(2006, 1, 1) && ord.OrderDate < new DateTime(2006, 2, 1)) on cus.Id equals ord.CustomerId into cusord
+                from col in cusord.DefaultIfEmpty()
+                join ordd in _context.OrderDetails on col.Id equals ordd.OrderId into cod
+                from codl in cod.DefaultIfEmpty()
+
+                where cus.City == "New York"
+
+
+                group codl by new { CustomerId = cus.Id, CustomerName = cus.FirstName ?? "" } into g
+                orderby g.Key.CustomerId
+                select new
+                {
+                  g.Key.CustomerId,
+                  g.Key.CustomerName,
+                  count = g.Count(x => x != null),
+                  TotalAmount = g.Sum(x => x.Quantity * x.UnitPrice)
+                };
+
+    return await qry22.ToListAsync();
+
+    // var qry8 = from cus in _context.Customers
+    //            where cus.JobTitle == "Owner" && cus.City == "Seattle"
+    //            select new CustomerResponse
+    //            {
+    //              Id = cus.Id,
+    //              FirstName = cus.FirstName,
+    //              LastName = cus.LastName,
+    //              Company = cus.Company,
+    //              Address = cus.Address,
+    //              City = cus.City
+    //            };
+    // return await qry8.ToListAsync();
+  }
+}

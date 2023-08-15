@@ -1,0 +1,56 @@
+SELECT e.first_name AS FirstName, e.last_name AS LastName, e.city AS City, e.country_region AS CountryRegin FROM employees AS e
+
+ Select e.first_name as FirstName, e.last_name as LastName,e.city as City, e.country_region as CountryRegion from employees as e where e.city="Seattle";
+
+ select o.id as Id, o.order_date as OrderDate, o.ship_name as ShipName,o0.quantity as Quantity,o0.unit_price as UnitPrice, o0.quantity * o0.unit_price as Amount from orders as o inner join order_details as o0 on o.id = o0.order_id;
+
+ select o.id as Id, o.order_date as OrderDate, o.ship_name as ShipName, coalesce(sum(o0.quantity * o0.unit_price),0.0) as TotalAmount from orders as o inner join order_details as o0 on o.id =o0.order_id group by o.id, o.order_date,o.ship_name order by o.order_date desc;
+
+  Select o.id as Id, o.order_date as OrderDate, o.ship_name as ShipName,(select coalesce(sum(o0.quantity * o0.unit_price),0.0) from order_details as o0 where o.id = o0.order_id) as TotalAmount from orders as o order by o.order_date desc;
+
+  SELECT e.id AS Id, e.first_name AS FirstName, e.last_name AS LastName, e.city AS City, o.ship_city AS ShipCity, e.business_phone AS BusinessPhone, e.country_region AS CountryRegion, e.company AS Company, e.email_address AS EmailAddress FROM employees AS e INNER JOIN orders AS o ON e.id = o.employee_id WHERE o.ship_city = "New York";
+
+  Select e.first_name as FirstName , c.last_name as LastName,o.order_date as OrderDate, c.city as City ,s.company as Company from orders as o inner join customers as c on o.customer_id= c.id inner join employees as e on o.employee_id=e.id inner join shippers as s on o.shipper_id = s.id where(c.city="New York") AND (s.company="Shipping Company A");
+
+  SELECT e.first_name AS FirstName, e.last_name AS LastName, p.product_name AS ProductName, p.product_code AS ProductCode FROM employees AS e INNER JOIN orders AS o ON e.id = o.employee_id INNER JOIN order_details AS o0 ON o.id = o0.order_id INNER JOIN products AS p ON o0.product_id = p.id WHERE p.product_code IN ("NWTB-81", "NWTC-82")ORDER BY e.first_name;
+
+  SELECT o.id as OrderId, o.customer_id as CustomerId, o.employee_id as EmployeeId, o.notes as Notes, o.order_date as OrderDate, o.paid_date as PaidDate, o.payment_type as PaymentType, o.ship_address as ShipAddress, o.ship_city as ShipCity, o.ship_country_region as ShipCountryRegion, o.ship_name as ShipName, o.ship_state_province as ShipProvince, o.ship_zip_postal_code as ShipPostalCode, o.shipped_date as ShippedDate, o.shipper_id as ShipperId, o.shipping_fee as ShippingFee, o.status_id as StatusId, o.tax_rate as TaxRate, o.tax_status_id as TaxStatusId, o.taxes as Taxes FROM orders AS o WHERE (o.order_date >= TIMESTAMP "2006-01-01 00:00:00") AND (o.order_date < TIMESTAMP "2006-02-01 00:00:00") ORDER BY o.order_date;
+
+
+
+  SELECT c.id AS Id, c.first_name AS FirstName, c.last_name AS LastName, COUNT(1) AS count FROM customers AS c INNER JOIN orders AS o ON c.id = o.customer_id GROUP BY c.id, c.first_name, c.last_name ORDER BY c.id;
+
+
+  Select Extract(month from o.order_date),extract(year from o.order_date), count(*) from orders as o group by extract(month from o.order_date),extract(year from o.order_date);
+
+
+  Select o.order_id as OrderId, o.product_id as ProductId, i.comments as comments from order_details as o inner join inventory_transactions as i on (o.order_id =i.customer_order_id) and (o.product_id = i.product_id);
+
+
+  select c.id as CustomerId ,c.first_name as FirstName ,c.last_name as LastName,Count(1) as count from customers as c inner join orders as o on c.id=o.customer_id group by c.id,c.first_name,c.last_name order by c.id;
+
+
+  SELECT c.id AS Id, c.first_name AS FirstName, c.last_name AS LastName, COUNT(CASE WHEN o.id IS NOT NULL THEN 1 END) AS Count FROM customers AS c LEFT JOIN orders AS o ON c.id = o.customer_id GROUP BY c.id, c.first_name, c.last_name ORDER BY c.id;
+
+
+  Select c.id as CustomerId , c.first_name as FirstName, c.last_name as LastName ,c.job_title as JobTitle ,c.city as City from customers as c where c.city="Seattle";
+
+
+  SELECT c.first_name AS FirstName, c.last_name AS LastName, c.city AS City, o.order_date AS OrderDate FROM customers AS c INNER JOIN orders AS o ON c.id = o.customer_id WHERE o.order_date >= '2006-03-01' AND o.order_date < '2006-04-01' AND c.city = "Seattle" ORDER BY o.employee_id;
+
+
+SELECT s.id AS Id, o.ship_name AS ShipName, COUNT(1) AS count FROM orders AS o INNER JOIN shippers AS s ON o.shipper_id = s.id GROUP BY s.id, o.ship_name ORDER BY s.id;
+
+
+SELECT s.id AS Id, s.company AS Company, COUNT(CASE WHEN o.id IS NOT NULL THEN 1 END) AS count FROM shippers AS s LEFT JOIN orders AS o ON s.id = o.shipper_id GROUP BY s.id, s.company ORDER BY s.id;
+
+
+SELECT p.id AS ProductId, p.product_name AS ProductName, o0.order_date AS OrderDate, p.category AS Category, COALESCE(SUM(o.quantity * o.unit_price), 0.0) AS TotalAmount FROM order_details AS o INNER JOIN orders AS o0 ON o.order_id = o0.id INNER JOIN products AS p ON o.product_id = p.id WHERE o0.order_date >= '2006-03-01' AND o0.order_date < '2006-04-01' AND p.category = "Beverages" GROUP BY o0.order_date, p.id, p.product_name, p.category;
+
+
+SELECT p.id AS ProductId, p.product_name AS ProductName, COALESCE(SUM(CASE WHEN p0.quantity IS NOT NULL THEN p0.quantity ELSE 0.0 END - CASE WHEN o.quantity IS NOT NULL THEN o.quantity ELSE 0.0 END), 0.0) AS TotalBalance FROM products AS p LEFT JOIN purchase_order_details AS p0 ON p.id = p0.product_id LEFT JOIN order_details AS o ON p.id = o.product_id GROUP BY p0.quantity, p.id, p.product_name;
+
+
+SELECT c.id AS CustomerId, COALESCE(c.first_name, '') AS CustomerName, COUNT(CASE WHEN o0.id IS NOT NULL THEN 1 END) AS count, COALESCE(SUM(o0.quantity * o0.unit_price), 0.0) AS TotalAmount FROM customers AS c LEFT JOIN (SELECT o.id, o.customer_id FROM orders AS o WHERE o.order_date >= TIMESTAMP '2006-01-01 00:00:00' AND o.order_date < TIMESTAMP '2006-02-01 00:00:00') AS t ON c.id = t.customer_id LEFT JOIN order_details AS o0 ON t.id = o0.order_id WHERE c.city = "New York" GROUP BY c.id, COALESCE(c.first_name, '')ORDER BY c.id;
+
+
