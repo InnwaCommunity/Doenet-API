@@ -1,0 +1,103 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using TodoApi.Models;
+using TodoApi.Repositories;
+using TodoApi.Util;
+
+namespace TodoApi.Controllers
+{
+  [Route("api/[controller]")]
+  [ApiController]
+  public class CustomerController : ControllerBase
+  {
+    private readonly IRepositoryWrapper _repositoryWrapper;
+    public CustomerController(IRepositoryWrapper RW)
+    {
+      _repositoryWrapper = RW;
+    }
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<CustomerResult>>> GetCustomers()
+    {
+      var customerItems = await _repositoryWrapper.Customer.ListCustomer();
+      return Ok(customerItems);
+    }
+    [HttpGet("id")]
+    public async Task<ActionResult<Customer>> Getcustomer(int id)
+    {
+      var customer = await _repositoryWrapper.Customer.FindByIDAsync(id);
+      if (customer == null)
+      {
+        return NotFound();
+      }
+      return customer;
+    }
+    [HttpPut("id")]
+    public async Task<IActionResult> PutCustomer(int id, Customer customer)
+    {
+      if (id != customer.CustomerId)
+      {
+        return BadRequest();
+      }
+      Customer? objCustomer;
+      try
+      {
+        objCustomer = await _repositoryWrapper.Customer.FindByIDAsync(id);
+        if (objCustomer == null)
+          throw new Exception("Invalid Customer ID");
+
+        FileService.DeleteFileNameOnly("CustomerPhoto", id.ToString());
+        FileService.MoveTempFile("CustomerPhoto", customer.CustomerId.ToString(), customer.CustomerPhoto);
+
+        objCustomer.CustomerName = customer.CustomerName;
+        await _repositoryWrapper.Customer.UpdateAsync(objCustomer);
+      }
+      catch (DbUpdateConcurrencyException)
+      {
+        if (!CustomerExists(id))
+        {
+          return NotFound();
+        }
+        else
+        {
+          throw;
+        }
+      }
+      return NoContent();
+    }
+
+    [HttpPost("search/{term}")]
+    public async Task<ActionResult<IEnumerable<CustomerResult>>> SearchCustomer(string customer)
+    {
+      var customerList = await _repositoryWrapper.Customer.SearchCustomer(customer);
+      return Ok(customerList);
+    }
+
+    [HttpPost("movefolder/{customer}")]
+    public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
+    {
+      if (customer.CustomerPhoto != null && customer.CustomerPhoto != "")
+      {
+        FileService.MoveTempFile("CustomerPhoto", customer.CustomerId.ToString(), customer.CustomerPhoto);
+      }
+      await _repositoryWrapper.Customer.CreateAsync(customer, true);
+      return CreatedAtAction(nameof(Getcustomer), new { id = customer.CustomerId }, customer);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteCustomer(int id)
+    {
+      var customer = await _repositoryWrapper.Customer.FindByIDAsync(id);
+      if (customer == null)
+      {
+        return NotFound();
+      }
+      FileService.DeleteFileNameOnly("CustomerPhoto", id.ToString());
+      await _repositoryWrapper.Customer.DeleteAsync(customer, true);
+      return NoContent();
+    }
+    private bool CustomerExists(int id)
+    {
+      return _repositoryWrapper.Customer.IsExists(id);
+    }
+  }
+}
