@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "d:\\Projects\\api_testing\\training\\TodoApi.csproj": {}
+    "M:\\Projects\\Projects\\Works\\training\\TodoApi.csproj": {}
   },
   "projects": {
-    "d:\\Projects\\api_testing\\training\\TodoApi.csproj": {
+    "M:\\Projects\\Projects\\Works\\training\\TodoApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "d:\\Projects\\api_testing\\training\\TodoApi.csproj",
+        "projectUniqueName": "M:\\Projects\\Projects\\Works\\training\\TodoApi.csproj",
         "projectName": "TodoApi",
-        "projectPath": "d:\\Projects\\api_testing\\training\\TodoApi.csproj",
+        "projectPath": "M:\\Projects\\Projects\\Works\\training\\TodoApi.csproj",
         "packagesPath": "C:\\Users\\KTZ Myanmar Group 2\\.nuget\\packages\\",
-        "outputPath": "d:\\Projects\\api_testing\\training\\obj\\",
+        "outputPath": "M:\\Projects\\Projects\\Works\\training\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\KTZ Myanmar Group 2\\AppData\\Roaming\\NuGet\\NuGet.Config"
