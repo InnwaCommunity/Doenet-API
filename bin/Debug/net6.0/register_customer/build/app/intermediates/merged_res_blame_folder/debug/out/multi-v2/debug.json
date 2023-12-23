@@ -364,7 +364,7 @@
             "outputFile": "com.example.register_customer.app-merged_res-11:/values-night-v8_values-night-v8.arsc.flat",
             "map": [
                 {
-                    "source": "M:\\Projects\\Projects\\Works\\training\\register_customer\\android\\app\\src\\main\\res\\values-night\\styles.xml",
+                    "source": "D:\\Projects\\Lite\\training\\register_customer\\android\\app\\src\\main\\res\\values-night\\styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",
@@ -1022,7 +1022,7 @@
                     }
                 },
                 {
-                    "source": "M:\\Projects\\Projects\\Works\\training\\register_customer\\android\\app\\src\\main\\res\\values\\styles.xml",
+                    "source": "D:\\Projects\\Lite\\training\\register_customer\\android\\app\\src\\main\\res\\values\\styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",
