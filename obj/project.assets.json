@@ -11032,11 +11032,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "m:\\Projects\\Projects\\training\\TodoApi.csproj",
+      "projectUniqueName": "D:\\Projects\\Lite\\training\\TodoApi.csproj",
       "projectName": "TodoApi",
-      "projectPath": "m:\\Projects\\Projects\\training\\TodoApi.csproj",
+      "projectPath": "D:\\Projects\\Lite\\training\\TodoApi.csproj",
       "packagesPath": "C:\\Users\\KTZ Myanmar Group 2\\.nuget\\packages\\",
-      "outputPath": "m:\\Projects\\Projects\\training\\obj\\",
+      "outputPath": "D:\\Projects\\Lite\\training\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\KTZ Myanmar Group 2\\AppData\\Roaming\\NuGet\\NuGet.Config"

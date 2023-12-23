@@ -1,0 +1,23 @@
+
+#Login
+Endpoint=> 'https://192.168.1.4:7034/api/token'
+Map<String, String> requestHeaders = {'Content-type': 'application/json'};
+Map<String,dynamic> requestBody ={
+        'LoginType': '1',
+        'username': username,
+        'password': password,
+    };
+
+ #Create User Account
+Endpoint=> 'https://192.168.1.4:7034/api/Admin'
+Map<String,dynamic> requestBody ={
+    "AdminName": username,
+    "LoginName":username,
+    "AdminEmail": email,
+    "Password": password
+    "AdminPhoto":""
+};
+
+ #Get Customer List
+
+

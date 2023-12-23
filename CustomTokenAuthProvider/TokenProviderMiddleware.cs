@@ -77,7 +77,8 @@ namespace TodoApi.CustomTokenAuthProvider
           context.Request.Path.ToString().ToLower().Contains("testapi/getinfo") ||
           context.Request.Path.ToString().ToLower().Contains("forgotpassword/requestbyemail") ||
           context.Request.Path.ToString().ToLower().Contains("forgotpassword/changepasswordbyotp") ||
-          context.Request.Path.ToString().ToLower().Contains("swagger/")
+          context.Request.Path.ToString().ToLower().Contains("swagger/")||
+          context.Request.Path.ToString().ToLower().Contains("/api/admin")
       )
       {
         await next(context);
@@ -139,6 +140,7 @@ namespace TodoApi.CustomTokenAuthProvider
       LoginDataModel? loginData = new();
       string username = "";
       string password = "";
+      string adminemail="";
       string _loginType = "";
 
       try
@@ -153,8 +155,10 @@ namespace TodoApi.CustomTokenAuthProvider
           if (loginData.UserName == null) loginData.UserName = "";
           if (loginData.Password == null) loginData.Password = "";
           if (loginData.LoginType == null) loginData.LoginType = "";
+          if (loginData.Email == null) loginData.Email="";
           username = loginData.UserName;
           password = loginData.Password;
+          adminemail=loginData.Email;
           _loginType = loginData.LoginType;
         }
       }
@@ -170,16 +174,18 @@ namespace TodoApi.CustomTokenAuthProvider
         dynamic loginresult;
         int AdminID;
         string AdminName;
+        string AdminEmail;
         int AdminLevelID;
 
         if (_loginType == "1")
         {
-          loginresult = await DoAdminTypeloginValidation(username, password);
+          loginresult = await DoAdminTypeloginValidation(username,adminemail, password);
           if (loginresult.error == 0)
           {
             loginresult = loginresult.data;
             AdminID = loginresult.AdminId;
             AdminName = loginresult.AdminName;
+            AdminEmail=loginresult.AdminEmail;
             AdminLevelID = loginresult.AdminLevelId;
           }
           else
@@ -213,13 +219,14 @@ namespace TodoApi.CustomTokenAuthProvider
 
         string encodedJwt = CreateEncryptedJWTToken(claims);
 
-        var response = new
+        var response = new 
         {
           AccessToken = encodedJwt,
           ExpiresIn = (int)_options.Expiration.TotalSeconds,
           UserID = AdminID.ToString(),
           LoginType = _loginType,
           UserLevelID = AdminLevelID,
+          AdminEmail = AdminEmail,
           DisplayName = AdminName
         };
         context.Response.ContentType = "application/json";
@@ -234,12 +241,12 @@ namespace TodoApi.CustomTokenAuthProvider
       }
     }
 
-    async Task<dynamic> DoAdminTypeloginValidation(string username, string password)
+    async Task<dynamic> DoAdminTypeloginValidation(string username,string email, string password)
     {
       try
       {
         //var objAdmin = await _repository.Admin.GetAdminByLoginName(username);
-        var resultAdmin = await _repository.Admin.FindByConditionAsync(adm => adm.LoginName == username);
+        var resultAdmin = await _repository.Admin.FindByConditionAsync(adm => adm.LoginName == username && adm.AdminEmail==email);
         if (resultAdmin == null || !resultAdmin.Any())
           throw new ValidationException("Login User " + username + " not found.");
 

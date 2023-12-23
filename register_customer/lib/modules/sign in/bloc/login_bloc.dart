@@ -1,6 +1,5 @@
 
-import 'package:register_customer/helper/api_service.dart';
-import 'package:register_customer/model/login_data_model.dart';
+import 'package:register_customer/modules/sign%20in/repository/login_repository.dart';
 
 import 'login_event.dart';
 import 'login_state.dart';
@@ -8,32 +7,26 @@ import 'login_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  final ApiService apiService;
-  final String baseUrl = 'https://172.31.132.67:7034/api';
-
-  LoginBloc({required this.apiService}) : super(InitialLoginState()) {
+  final LoginRepository loginRepository;
+  LoginBloc(this.loginRepository) : super(InitialLoginState()) {
     on<PerformLoginEvent>((event, emit) async {
-      emit(LoadingLoginState());
-
-      Map<String, String> loginRequestHeader = {};
-      Map<String, dynamic> loginRequestBody = {
-        'LoginType': '1',
-        'username': event.username,
-        'password': event.password,
-      };
-      // print(loginRequestBody);
-      try {
-        LoginDataModel loginDataModel = await apiService.postAuthData(
-            '$baseUrl/token', loginRequestHeader, loginRequestBody);
-        if (loginDataModel.displayName == null) {
-          emit(
-              FailureLoginState(errorMessage: 'Invalid username or password.'));
-        } else {
+      emit(InitialLoginState());
+      String username=event.username;
+      String password=event.password;
+      String email=event.email;
+      if (username.isNotEmpty && password.isNotEmpty) {
+        String res= await loginRepository.login(username,email, password);
+       if (res != 'false' && res == 'trueuser') {
           emit(SuccessLoginState());
+        }else{
+          emit(FailureLoginState(errorMessage: 'Invalid username or password.'));
         }
-      } catch (e) {
-        emit(FailureLoginState(
-            errorMessage: 'An error occurred while trying to log in.'));
+      } else {
+        if (username.isEmpty) {
+          emit(NeedToAddUserName());
+        } else if(password.isEmpty){
+          emit(NeedToAddPassword());
+        }
       }
     });
   }
