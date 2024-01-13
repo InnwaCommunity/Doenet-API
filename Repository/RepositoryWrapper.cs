@@ -106,5 +106,57 @@ namespace TodoApi.Repositories
       }
 
     }
+
+    
+    private IClusterRepository? oCluster;
+    public IClusterRepository Cluster
+    {
+      get
+      {
+        if (oCluster == null)
+        {
+          oCluster = new ClusterRepository(_repoContext);
+        }
+        return oCluster;
+      }
+    }
+    private ICategoryRepository? oCategory;
+    public ICategoryRepository Category
+    {
+      get
+      {
+        if (oCategory == null)
+        {
+          oCategory = new CategoryRepository(_repoContext);
+        }
+        return oCategory;
+      }
+    }
+    private IMemberRepository? oMember;
+    public IMemberRepository Member
+    {
+      get
+      {
+        if (oMember == null)
+        {
+          oMember = new MemberRepository(_repoContext);
+        }
+        return oMember;
+      }
+    }
+
+    
+    private ICollectRepository? oCollect;
+    public ICollectRepository Collect
+    {
+      get
+      {
+        if (oCollect == null)
+        {
+          oCollect = new CollectRepository(_repoContext);
+        }
+        return oCollect;
+      }
+    }
   }
 }

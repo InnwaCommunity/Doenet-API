@@ -4,6 +4,7 @@ import 'package:register_customer/modules/customer/bloc/customer_screen_state_ma
 import 'package:register_customer/modules/customer/repository/customer_repository.dart';
 import 'package:register_customer/modules/customer/screens/customer_screen.dart';
 import 'package:register_customer/modules/home/bloc/home_screen_state_management_bloc.dart';
+import 'package:register_customer/modules/home/repository/home_screen_repository.dart';
 import 'package:register_customer/modules/home/screens/home_screen.dart';
 import 'package:register_customer/modules/sign%20in/bloc/login_bloc.dart';
 import 'package:register_customer/modules/sign%20in/repository/login_repository.dart';
@@ -21,6 +22,9 @@ class Routes {
   static const signup = 'signup';
   static const home = 'home';
   static const customerpage = 'customer';
+  static const addTotalBalance = 'addTotalBalance';
+  static const totalhistory = 'totalhistory';
+  static const addMenuItem = 'addMenuItem';
 
   static Route<dynamic>? routeGenerator(RouteSettings settings) {
     // final argument=settings.arguments;
@@ -34,7 +38,7 @@ class Routes {
             ),
             settings);
 
-      case 'login':
+      case Routes.login:
         return makeRoute(
             BlocProvider(
               create: (context) => LoginBloc(LoginRepositoryImpl()),
@@ -42,7 +46,7 @@ class Routes {
             ),
             settings);
 
-      case 'signup':
+      case Routes.signup:
         return makeRoute(
             BlocProvider(
               create: (context) => SignupStateManagementBloc(
@@ -51,15 +55,15 @@ class Routes {
             ),
             settings);
 
-      case 'home':
+      case Routes.home:
         return makeRoute(
             BlocProvider(
-              create: (context) => HomeScreenStateManagementBloc(),
+              create: (context) => HomeScreenStateManagementBloc(HomeScreenRepositoryImpl()),
               child: const HomeScreen(),
             ),
             settings);
 
-      case 'customer':
+      case Routes.customerpage:
         return makeRoute(
             BlocProvider(
               create: (context) =>
@@ -67,6 +71,20 @@ class Routes {
               child: const CustomerPage(),
             ),
             settings);
+
+      
+      case 'addTotalBalance':
+        // return makeRoute(
+        //     // AddTotalScreen(
+        //     //   argument as TotalBalanceModel?,
+        //     // ),
+        //     settings);
+
+      case 'addMenuItem':
+        // return makeRoute(const AddMenuScreen(), settings);
+
+      case 'totalhistory':
+        // return makeRoute( const TotalScreen(), settings);
     }
     return null;
   }

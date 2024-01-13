@@ -27,15 +27,23 @@ class _SplashScreenState extends State<SplashScreen> {
     return  BlocListener<SplashStateManagementBloc, SplashStateManagementState>(
       listener: (context, state) {
         if (state is AutoLoginSuccess) {
-          context.left(Routes.customerpage, (route) => false);
+          context.left(Routes.home, (route) => false);
         }
         if (state is AutoLoginFail) {
           context.left(Routes.login, (route) => false);
         }
       },
-      child: const Center(
-        child: CircularProgressIndicator(),
-      ),
+      child: Scaffold(
+          body: Center(
+            child: AnimatedContainer(
+              duration: const Duration(seconds: 1),
+              child: const Text(
+                'Happy Cooky',
+                style: TextStyle(color: Colors.green, fontSize: 25),
+              ),
+            ),
+          ),
+        )
     );
   }
 }

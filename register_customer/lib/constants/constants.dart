@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-String defaultBaseUrl= 'https://192.168.1.3:7034/';
+String defaultBaseUrl= 'https://192.168.1.4:7034/';
 
 final GlobalKey<NavigatorState> navigatorKey =
     GlobalKey(debugLabel: 'Main Navigator');

@@ -22,7 +22,7 @@ class ApiService{
             LoginDataModel.fromJson(jsonDecode(response.body));
         accessToken = loginDataModel.accessToken ?? '';
       await SharedPref.setString(key: shpaccessToken, value: accessToken);
-      await SharedPref.setStringList(key: shploginInfo, value:[requestBody['username'],requestBody['email'],requestBody['password']] );
+      await SharedPref.setStringList(key: shploginInfo, value:[requestBody['username'],requestBody['email'],loginDataModel.userId ?? '', requestBody['password']] );
       return 'trueuser';
     }else if(response.statusCode == 400){
       // return response.body;
@@ -37,6 +37,26 @@ class ApiService{
   Future<dynamic> postSignup(String apiUrl, 
       Map<String, dynamic> requestBody) async {
       Map<String, String> requestHeaders = {'Content-type': 'application/json'};
+    try {
+      Uri uri = getUri(apiUrl);
+      var response = await http.post(uri,
+          body: jsonEncode(requestBody), headers: requestHeaders);
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return 'false';
+      }
+    } on Exception catch (_) {
+      return 'false';
+    }
+  }
+
+  Future<dynamic> post(String apiUrl, 
+      Map<String, dynamic> requestBody) async {
+      Map<String, String> requestHeaders = {
+        'Authorization': 'Bearer ${await getToken()}'
+      };
+      requestHeaders.putIfAbsent('Content-type', () => 'application/json');
     try {
       Uri uri = getUri(apiUrl);
       var response = await http.post(uri,
