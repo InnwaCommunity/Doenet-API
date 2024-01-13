@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace TodoApi.Models
 {
@@ -23,6 +24,9 @@ namespace TodoApi.Models
     [Column("login_name")]
     [StringLength(50)]
     public string LoginName { get; set; } = string.Empty;
+
+    [Column("user_id")]
+    public int UserId{get;set;}
 
     // public int LoginFailCount { get; set; }
 

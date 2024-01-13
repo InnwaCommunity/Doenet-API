@@ -12,7 +12,13 @@
     IOTPRepository OTP { get; }
 
     IEventLogRepository EventLog { get; }
+    IClusterRepository Cluster {get;}
 
+    ICategoryRepository Category {get;}
+
+    IMemberRepository Member {get;}
+
+    ICollectRepository Collect {get;}
 
   }
 }

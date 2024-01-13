@@ -42,6 +42,12 @@ namespace TodoApi.Models
 
     public DbSet<EventLog> EventLogs { get; set; } = null!;
 
+    public DbSet<Cluster> Clusters {get;set;} = null!;
+    public DbSet<Category> Categories {get;set;} = null!;
+
+    public DbSet<Member> Members {get;set;} = null!;
+    public DbSet<Collect> Collects {get;set;} = null!;
+
 
     public async Task<int> RunExecuteNonQuery(string Query, ExpandoObject queryFilter)
     {

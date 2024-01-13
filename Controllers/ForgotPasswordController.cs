@@ -10,9 +10,14 @@ namespace TodoApi.Controllers
 
   [Route("api/[controller]")]
   [ApiController]
-  public class ForgotPasswordController : BaseController<ForgotPasswordController>
+  // public class ForgotPasswordController : BaseController<ForgotPasswordController>//due to need to add command
+  public class ForgotPasswordController : BaseController
   {
     private readonly IRepositoryWrapper _repositoryWrapper;
+    //  public ForgotPasswordController(IRepositoryWrapper RW)
+    // {
+    //         _repositoryWrapper = RW;
+    // }
     private readonly int _maxOTPFailCount;
     private readonly int _maxRetryOTPCount;
     private readonly int _otpExpireMinute;
@@ -72,12 +77,14 @@ namespace TodoApi.Controllers
       }
       catch (ValidationException vex)
       {
-        Logger.LogWarning(vex, "Forgot Password Fail {LoginName}, {Email}", LoginName, Email);
+        // Logger.LogWarning(vex, "Forgot Password Fail {LoginName}, {Email}", LoginName, Email);
         return new { data = 0, error = vex.ValidationResult.ErrorMessage };
       }
       catch (Exception ex)
       {
-        Logger.LogError(ex, "Forgot Password Fail {LoginName}, {Email}", LoginName, Email);
+        Console.WriteLine("GetApproverSettingWeb" + DateTime.Now + ex.Message);
+        // _repositoryWrapper.EventLog.Error("Error in Delete Assign Comment", ex.Message);
+        // Logger.LogError(ex, "Forgot Password Fail {LoginName}, {Email}", LoginName, Email);
         return new { data = 0, error = "Forgot Password Fail" };
       }
     }
@@ -224,7 +231,7 @@ namespace TodoApi.Controllers
       }
       catch (ValidationException vex)
       {
-        Logger.LogWarning(vex, "ChangePasswordByOTP Fail: {LoginName}, {Email}", LoginName, EP_value);
+        // Logger.LogWarning(vex, "ChangePasswordByOTP Fail: {LoginName}, {Email}", LoginName, EP_value);
 
         await _repositoryWrapper.EventLog.Warning("Change Password Fail: " + vex.Message);
         return new { data = 0, error = vex.ValidationResult.ErrorMessage };
@@ -232,7 +239,7 @@ namespace TodoApi.Controllers
       }
       catch (Exception ex)
       {
-        Logger.LogError(ex, "ChangePasswordByOTP Fail: {LoginName}, {Email}", LoginName, EP_value);
+        // Logger.LogError(ex, "ChangePasswordByOTP Fail: {LoginName}, {Email}", LoginName, EP_value);
 
         await _repositoryWrapper.EventLog.Error("Change Password Fail", ex.Message);
         return new { data = 0, error = "ChangePasswordByOTP Fail" };

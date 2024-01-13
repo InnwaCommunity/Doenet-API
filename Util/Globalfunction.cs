@@ -174,5 +174,11 @@ namespace TodoApi.Util
       dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
       return dateTime;
     }
+
+    public static DateTime ConvertStringToDateTime(String datetime)
+    {
+      return DateTime.ParseExact(datetime, "yyyy-MM-d",
+                                       System.Globalization.CultureInfo.InvariantCulture);
+    }
   }
 }

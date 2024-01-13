@@ -18,6 +18,38 @@ Map<String,dynamic> requestBody ={
     "AdminPhoto":""
 };
 
+# Create Cluster
+Endpoint=> 'https://192.168.1.4:7034/api/Admin'
+Map<String,dynamic> requestBody ={
+ "ClusterName": "Monthly Usage",
+ "IsPasswordUse":true,
+ "Password" : "Monthly@1", if IsPasswordUse is false,no need add Password
+ "CreatorIdval": 93
+};
+
+# Get ClusterList By UserId
+Endpoint=> https://172.31.132.67:7034/api/Cluster/GetClusterList
+Map<String,dynamic> requestBody ={
+    "UserId": 93
+};
+
+Response => [
+    {
+        "ClusterId": 21,
+        "ClusterName": "Monthly Usage",
+        "IsPasswordUse": false,
+        "UserId": 93,
+        "Admin": true,
+        "Commander": true,
+        "Viewer": true,
+        "Employee": true,
+        "Inactive": false,
+        "CreateDate": "2024-01-09T16:50:16"
+    }
+]
+
+
  #Get Customer List
 
-
+KpiAssignId = Convert.ToInt32(Encryption.DecryptID(obj.AssignIDval.ToString(),LoginUserID.ToString()));
+AssignIDval = Encryption.EncryptID(cmt.KpiAssignId.ToString(), LoginUserID.ToString()), 

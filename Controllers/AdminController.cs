@@ -83,7 +83,8 @@ namespace TodoApi.Controllers
       dynamic objresponse;
       try
       {
-
+        Guid userId = Guid.NewGuid();
+        int userIdAsInt = userId.GetHashCode();
         var newobj = new Admin
         {
           AdminId = adminRequest.AdminId,
@@ -93,6 +94,7 @@ namespace TodoApi.Controllers
           AdminEmail = adminRequest.AdminEmail,
           Password = adminRequest.Password,
           AdminPhoto = adminRequest.AdminPhoto,
+          UserId=userIdAsInt,
           Inactive = false,
           // IsBlock = false,
           // CreateDate = System.DateTime.Now,
@@ -105,7 +107,7 @@ namespace TodoApi.Controllers
         {
 
           // if (password.ToString().Length < _minPasswordLength)
-          // {
+        // {
           //   throw new ValidationException("Invalid Password");
           // }
 

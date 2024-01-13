@@ -31,7 +31,7 @@ class LoginPage extends StatelessWidget {
         child: BlocListener<LoginBloc, LoginState>(
         listener: (context, state) {
           if (state is SuccessLoginState) {
-            context.left(Routes.customerpage, (route) => false);
+            context.left(Routes.home, (route) => false);
           }else if(state is FailureLoginState){
             DialogService.okDialog(
                     parentContext: context,
