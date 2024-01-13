@@ -6,7 +6,7 @@ import 'package:register_customer/model/customer_data_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomerService {
-  final customerUrl = 'https://172.31.132.67:7034/api/Customer';
+  final customerUrl = 'https://192.168.1.4:7034/api/Customer';
 
   Future<String> getToken() async {
     final prefs = await SharedPreferences.getInstance();

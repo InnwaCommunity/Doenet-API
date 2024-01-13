@@ -78,49 +78,83 @@ namespace TodoApi.Controllers
 
 
     [HttpPost]
-    public async Task<ActionResult<AdminRequest>> PostAdmin(AdminRequest adminRequest)
+    public async Task<ActionResult<dynamic>> PostAdmin(AdminRequest adminRequest)
     {
-
-      var newobj = new Admin
+      dynamic objresponse;
+      try
       {
-        AdminId = adminRequest.AdminId,
-        AdminName = adminRequest.AdminName,
-        AdminLevelId = adminRequest.AdminLevelId,
-        LoginName = adminRequest.LoginName,
-        AdminEmail = adminRequest.AdminEmail,
-        Password = adminRequest.Password,
-        AdminPhoto = adminRequest.AdminPhoto,
-        Inactive = false,
-        // IsBlock = false,
-        // CreateDate = System.DateTime.Now,
-        // ModifiedDate = System.DateTime.Now
-      };
-      var password = adminRequest.Password;
+        Guid userId = Guid.NewGuid();
+        int userIdAsInt = userId.GetHashCode();
+        var newobj = new Admin
+        {
+          AdminId = adminRequest.AdminId,
+          AdminName = adminRequest.AdminName,
+          AdminLevelId = adminRequest.AdminLevelId,
+          LoginName = adminRequest.LoginName,
+          AdminEmail = adminRequest.AdminEmail,
+          Password = adminRequest.Password,
+          AdminPhoto = adminRequest.AdminPhoto,
+          UserId=userIdAsInt,
+          Inactive = false,
+          // IsBlock = false,
+          // CreateDate = System.DateTime.Now,
+          // ModifiedDate = System.DateTime.Now
+        };
+        var password = adminRequest.Password;
+        if(adminRequest.AdminLevelId == null) newobj.AdminLevelId=1;
+        bool check = await checkEmailUnique(adminRequest);
+        if (check)
+        {
 
-      // if (password.ToString().Length < _minPasswordLength)
-      // {
-      //   throw new ValidationException("Invalid Password");
-      // }
+          // if (password.ToString().Length < _minPasswordLength)
+        // {
+          //   throw new ValidationException("Invalid Password");
+          // }
 
 
-      string salt = Util.SaltedHash.GenerateSalt();
-      password = Util.SaltedHash.ComputeHash(salt, password.ToString());
-      newobj.Password = password;
-      newobj.Salt = salt;
-      Validator.ValidateObject(newobj, new ValidationContext(newobj), true); //server side validation by using
-      await _repositoryWrapper.Admin.CreateAsync(newobj);
-      // await _repositoryWrapper.EventLog.Update(newobj);
-      await _repositoryWrapper.EventLog.Insert(newobj);
+          string salt = Util.SaltedHash.GenerateSalt();
+          password = Util.SaltedHash.ComputeHash(salt, password.ToString());
+          newobj.Password = password;
+          newobj.Salt = salt;
+          Validator.ValidateObject(newobj, new ValidationContext(newobj), true); //server side validation by using
+          await _repositoryWrapper.Admin.CreateAsync(newobj);
+          // await _repositoryWrapper.EventLog.Update(newobj);
+          await _repositoryWrapper.EventLog.Insert(newobj);
 
-      if (newobj.AdminPhoto != null && newobj.AdminPhoto != "")
-      {
-        FileService.MoveTempFile("AdminPhoto", newobj.AdminId.ToString(), newobj.AdminPhoto);
-        // FileService.MoveTempFileDir("AdminPhoto", newobj.AdminId.ToString(), newobj.AdminPhoto);
+          if (newobj.AdminPhoto != null && newobj.AdminPhoto != "")
+          {
+            FileService.MoveTempFile("AdminPhoto", newobj.AdminId.ToString(), newobj.AdminPhoto);
+            // FileService.MoveTempFileDir("AdminPhoto", newobj.AdminId.ToString(), newobj.AdminPhoto);
+          }
+          // return new { data = AdminId };
+
+
+          // return CreatedAtAction(nameof(GetAdmin), new { id = newobj.AdminId }, newobj);
+          // return Ok(newobj);
+          objresponse = "Created Successfully";
+        }
+        else
+        {
+          objresponse = "These Email Address have been Signup";
+        }
       }
-      // return new { data = AdminId };
 
+      catch (Exception ex)
+      {
+        objresponse = new { data = ex.Message };
+      }
+      return objresponse;
+    }
 
-      return CreatedAtAction(nameof(GetAdmin), new { id = newobj.AdminId }, newobj);
+    public async Task<bool> checkEmailUnique(AdminRequest adminRequest){
+      bool unique=false;
+      string email=adminRequest.AdminEmail;
+      var resultAdmin = await _repositoryWrapper.Admin.FindByConditionAsync(adm => adm.AdminEmail == email);
+      if (resultAdmin==null || !resultAdmin.Any())
+      {
+        unique=true;///There is no account by this email.
+      }
+      return unique;
     }
 
 

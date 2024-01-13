@@ -77,7 +77,8 @@ namespace TodoApi.CustomTokenAuthProvider
           context.Request.Path.ToString().ToLower().Contains("testapi/getinfo") ||
           context.Request.Path.ToString().ToLower().Contains("forgotpassword/requestbyemail") ||
           context.Request.Path.ToString().ToLower().Contains("forgotpassword/changepasswordbyotp") ||
-          context.Request.Path.ToString().ToLower().Contains("swagger/")
+          context.Request.Path.ToString().ToLower().Contains("swagger/")||
+          context.Request.Path.ToString().ToLower().Contains("/api/admin")
       )
       {
         await next(context);
@@ -139,6 +140,7 @@ namespace TodoApi.CustomTokenAuthProvider
       LoginDataModel? loginData = new();
       string username = "";
       string password = "";
+      string adminemail="";
       string _loginType = "";
 
       try
@@ -153,8 +155,10 @@ namespace TodoApi.CustomTokenAuthProvider
           if (loginData.UserName == null) loginData.UserName = "";
           if (loginData.Password == null) loginData.Password = "";
           if (loginData.LoginType == null) loginData.LoginType = "";
+          if (loginData.Email == null) loginData.Email="";
           username = loginData.UserName;
           password = loginData.Password;
+          adminemail=loginData.Email;
           _loginType = loginData.LoginType;
         }
       }
@@ -170,16 +174,18 @@ namespace TodoApi.CustomTokenAuthProvider
         dynamic loginresult;
         int AdminID;
         string AdminName;
+        string AdminEmail;
         int AdminLevelID;
 
         if (_loginType == "1")
         {
-          loginresult = await DoAdminTypeloginValidation(username, password);
+          loginresult = await DoAdminTypeloginValidation(username,adminemail, password);
           if (loginresult.error == 0)
           {
             loginresult = loginresult.data;
             AdminID = loginresult.AdminId;
             AdminName = loginresult.AdminName;
+            AdminEmail=loginresult.AdminEmail;
             AdminLevelID = loginresult.AdminLevelId;
           }
           else
@@ -212,14 +218,18 @@ namespace TodoApi.CustomTokenAuthProvider
         context.User.AddIdentity(appIdentity); //add custom identity because default identity has delay to get data in EventLogRepository
 
         string encodedJwt = CreateEncryptedJWTToken(claims);
+        int LoginUserID = Convert.ToInt32(_tokenData.UserID);
 
-        var response = new
+        var response = new 
         {
           AccessToken = encodedJwt,
           ExpiresIn = (int)_options.Expiration.TotalSeconds,
-          UserID = AdminID.ToString(),
+          // UserID = AdminID.ToString(),
+          UserIDval=Encryption.EncryptID(AdminID.ToString(),LoginUserID.ToString()),
+          UserID=AdminID.ToString(),
           LoginType = _loginType,
           UserLevelID = AdminLevelID,
+          AdminEmail = AdminEmail,
           DisplayName = AdminName
         };
         context.Response.ContentType = "application/json";
@@ -234,12 +244,14 @@ namespace TodoApi.CustomTokenAuthProvider
       }
     }
 
-    async Task<dynamic> DoAdminTypeloginValidation(string username, string password)
+    
+
+    async Task<dynamic> DoAdminTypeloginValidation(string username,string email, string password)
     {
       try
       {
         //var objAdmin = await _repository.Admin.GetAdminByLoginName(username);
-        var resultAdmin = await _repository.Admin.FindByConditionAsync(adm => adm.LoginName == username);
+        var resultAdmin = await _repository.Admin.FindByConditionAsync(adm => adm.LoginName == username && adm.AdminEmail==email);
         if (resultAdmin == null || !resultAdmin.Any())
           throw new ValidationException("Login User " + username + " not found.");
 
@@ -361,16 +373,32 @@ namespace TodoApi.CustomTokenAuthProvider
             var exp = DateTime.UtcNow;
             var expires_in = exp.AddMinutes(_tokenExpireMinute).ToString("ddd, dd MMM yyyy HH':'mm':'ss 'GMT'");
             var now = DateTime.UtcNow;
-            var _newtokenData = new TokenData()
-            {
-              Sub = userObj.AdminName,
-              Jti = await _options.NonceGenerator(),
-              Iat = new DateTimeOffset(now).ToUniversalTime().ToUnixTimeSeconds().ToString(),
-              UserID = userObj.AdminId.ToString(),
-              UserLevelID = userObj.AdminLevelId.ToString(),
-              TicketExpireDate = now.Add(_options.Expiration),
-              LoginType = _tokenData.LoginType
-            };
+            var _newtokenData = new TokenData();
+            _newtokenData.Sub = userObj.AdminName;
+            _newtokenData.Jti= await _options.NonceGenerator();
+            _newtokenData.Iat = new DateTimeOffset(now).ToUniversalTime().ToUnixTimeSeconds().ToString();
+            _newtokenData.UserID = userObj.AdminId.ToString();
+            _newtokenData.UserName=userObj.AdminName;
+            _newtokenData.UserLevelID = userObj.AdminLevelId.ToString();
+            _newtokenData.TicketExpireDate = now.Add(_options.Expiration);
+            _newtokenData.LoginType = _tokenData.LoginType;
+
+            //global variable 
+            _tokenData.Sub = userObj.AdminName;
+            _tokenData.Jti= await _options.NonceGenerator();
+            _tokenData.Iat = new DateTimeOffset(now).ToUniversalTime().ToUnixTimeSeconds().ToString();
+            _tokenData.UserID = userObj.AdminId.ToString();
+            _tokenData.UserName=userObj.AdminName;
+            // var _newtokenData = new TokenData()
+            // {
+            //   Sub = userObj.AdminName,
+            //   Jti = await _options.NonceGenerator(),
+            //   Iat = new DateTimeOffset(now).ToUniversalTime().ToUnixTimeSeconds().ToString(),
+            //   UserID = userObj.AdminId.ToString(),
+            //   UserLevelID = userObj.AdminLevelId.ToString(),
+            //   TicketExpireDate = now.Add(_options.Expiration),
+            //   LoginType = _tokenData.LoginType
+            // };
             var claims = Globalfunction.GetClaims(_newtokenData);
             var appIdentity = new ClaimsIdentity(claims);
             context.User.AddIdentity(appIdentity); //add custom identity because default identity has delay to get data in EventLogRepository

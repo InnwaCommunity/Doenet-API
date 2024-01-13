@@ -1,102 +1,101 @@
-import 'package:flutter/material.dart';
-import 'package:register_customer/customer_details.dart';
-import 'package:register_customer/helper/customer_service.dart';
-import 'package:register_customer/model/customer_data_model.dart';
+// import 'package:flutter/material.dart';
+// import 'package:register_customer/customer_details.dart';
+// import 'package:register_customer/helper/customer_service.dart';
+// import 'package:register_customer/model/customer_data_model.dart';
 
-class CustomerPage extends StatefulWidget {
-  const CustomerPage({super.key});
+// class CustomerPage extends StatefulWidget {
+//   const CustomerPage({super.key});
 
-  // final String title;
+//   // final String title;
 
-  @override
-  State<CustomerPage> createState() => _CustomerPageState();
-}
+//   @override
+//   State<CustomerPage> createState() => _CustomerPageState();
+// }
 
-class _CustomerPageState extends State<CustomerPage> {
-  List<Customer> customerList = [];
-  Future<List<Customer>>? _customers;
-  TextEditingController inputcontroller = TextEditingController();
-  // SelectedCustomer? selectedCustomer;
+// class _CustomerPageState extends State<CustomerPage> {
+//   List<Customer> customerList = [];
+//   Future<List<Customer>>? _customers;
+//   TextEditingController inputcontroller = TextEditingController();
+//   // SelectedCustomer? selectedCustomer;
 
-  @override
-  void initState() {
-    super.initState();
-    _customers = CustomerService().fetchCustomers().then((value) => value!);
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     _customers = CustomerService().fetchCustomers().then((value) => value!);
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Customers"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            iconSize: 30,
-            // style: Padding(padding: Edgew),
-            onPressed: () {
-              Navigator.pushNamed(context, '/searchcustomer');
-              // print('Search button pressed');
-            },
-          ),
-        ],
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 690,
-            child: FutureBuilder<List<Customer>>(
-              future: _customers,
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<Customer>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    List<Customer> customers = snapshot.data ?? [];
-                    customers.sort(
-                        (a, b) => a.customerName.compareTo(b.customerName));
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text("Customers"),
+//         actions: [
+//           IconButton(
+//             icon: const Icon(Icons.search),
+//             iconSize: 30,
+//             // style: Padding(padding: Edgew),
+//             onPressed: () {
+//               Navigator.pushNamed(context, '/searchcustomer');
+//               // print('Search button pressed');
+//             },
+//           ),
+//         ],
+//       ),
+//       body: Column(
+//         mainAxisAlignment: MainAxisAlignment.start,
+//         children: [
+//           Expanded(
+//             child: FutureBuilder<List<Customer>>(
+//               future: _customers,
+//               builder: (BuildContext context,
+//                   AsyncSnapshot<List<Customer>> snapshot) {
+//                 if (snapshot.connectionState == ConnectionState.done) {
+//                   if (snapshot.hasError) {
+//                     return Text('Error: ${snapshot.error}');
+//                   } else {
+//                     List<Customer> customers = snapshot.data ?? [];
+//                     customers.sort(
+//                         (a, b) => a.customerName.compareTo(b.customerName));
 
-                    return ListView.builder(
-                      itemCount: customers.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        Customer customer = customers[index];
-                        return ListTile(
-                          title: Text(customer.customerName),
-                          subtitle:
-                              Text('Address: ${customer.customerAddress}'),
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-                                    CustomerDetails(customer: customer)));
-                          },
-                          tileColor: Colors.deepOrange[200],
-                        );
-                      },
-                    );
-                  }
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
-            ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => CustomerDetails()));
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
-}
+//                     return ListView.builder(
+//                       itemCount: customers.length,
+//                       itemBuilder: (BuildContext context, int index) {
+//                         Customer customer = customers[index];
+//                         return ListTile(
+//                           title: Text(customer.customerName),
+//                           subtitle:
+//                               Text('Address: ${customer.customerAddress}'),
+//                           onTap: () {
+//                             Navigator.of(context).push(MaterialPageRoute(
+//                                 builder: (context) =>
+//                                     CustomerDetails(customer: customer)));
+//                           },
+//                           tileColor: Colors.deepOrange[200],
+//                         );
+//                       },
+//                     );
+//                   }
+//                 } else {
+//                   return const Center(
+//                     child: CircularProgressIndicator(),
+//                   );
+//                 }
+//               },
+//             ),
+//           ),
+//         ],
+//       ),
+//       floatingActionButton: FloatingActionButton(
+//         onPressed: () {
+//           Navigator.of(context)
+//               .push(MaterialPageRoute(builder: (context) => CustomerDetails()));
+//         },
+//         tooltip: 'Increment',
+//         child: const Icon(Icons.add),
+//       ),
+//     );
+//   }
+// }
 
 //from above codes
 // Container(
