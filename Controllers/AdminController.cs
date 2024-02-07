@@ -147,7 +147,7 @@ namespace TodoApi.Controllers
     }
 
     private async Task<bool> checkEmailUnique(AdminRequest adminRequest){
-      bool unique=true;
+      bool unique=false;
       string email=adminRequest.AdminEmail;
       var resultAdmin = await _repositoryWrapper.Admin.FindByConditionAsync(adm => adm.AdminEmail == email);
       if (resultAdmin==null || !resultAdmin.Any())
