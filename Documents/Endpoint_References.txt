@@ -1,6 +1,6 @@
 
 #Login
-Endpoint=> 'https://192.168.1.4:7034/api/token'
+Endpoint=> 'https://172.31.132.67:7034/api/token'
 Map<String, String> requestHeaders = {'Content-type': 'application/json'};
 Map<String,dynamic> requestBody ={
         'LoginType': '1',
@@ -9,7 +9,7 @@ Map<String,dynamic> requestBody ={
     };
 
  #Create User Account
-Endpoint=> 'https://192.168.1.4:7034/api/Admin'
+Endpoint=> 'https://172.31.132.67:7034/api/Admin'
 Map<String,dynamic> requestBody ={
     "AdminName": username,
     "LoginName":username,
@@ -19,7 +19,7 @@ Map<String,dynamic> requestBody ={
 };
 
 # Create Cluster
-Endpoint=> 'https://192.168.1.4:7034/api/Admin'
+Endpoint=> 'https://192.168.1.5:7034/api/Admin'
 Map<String,dynamic> requestBody ={
  "ClusterName": "Monthly Usage",
  "IsPasswordUse":true,
@@ -51,5 +51,3 @@ Response => [
 
  #Get Customer List
 
-KpiAssignId = Convert.ToInt32(Encryption.DecryptID(obj.AssignIDval.ToString(),LoginUserID.ToString()));
-AssignIDval = Encryption.EncryptID(cmt.KpiAssignId.ToString(), LoginUserID.ToString()), 

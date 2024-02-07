@@ -102,10 +102,11 @@ namespace TodoApi.Controllers
                     // Validator.ValidateObject(catobj, new ValidationContext(catobj), true);
                     // await _repositoryWrapper.Category.CreateAsync(catobj);
                     // await _repositoryWrapper.EventLog.Insert(catobj);
-
+                    var user= await _repositoryWrapper.Admin.FindByIDAsync(UserId);
                     var member = new Member
                     {
                         UserId = UserId,
+                        MemberName=user?.AdminName ?? "",
                         ClusterId = cluster.ClusterId,
                         Admin = true,
                         Commander = true,
@@ -167,6 +168,7 @@ namespace TodoApi.Controllers
                 var newres = new List<dynamic>();
                 foreach (var item in res)
                 {
+                    int numOfMembers= await _repositoryWrapper.Cluster.NumberOfMember(item.ClusterId);
                     var newcluster = new
                     {
                         ClusterIdval = Encryption.EncryptID(item.ClusterId.ToString(), item.UserId.ToString()),
@@ -177,7 +179,7 @@ namespace TodoApi.Controllers
                         Viewer = item.Viewer,
                         Employee = item.Employee,
                         Inactive = item.Inactive,
-                        NumOfMembers = item.NumOfMembers,
+                        NumOfMembers = numOfMembers,
                         CreateDate = item.CreateDate
                     };
 

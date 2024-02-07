@@ -20,5 +20,12 @@ class CreateClusterEvent extends HomeScreenStateManagementEvent{
 class ClusterPasswordValidate extends HomeScreenStateManagementEvent{
   final String password;
   final String clusterIdval;
-  const ClusterPasswordValidate({required this.password,required this.clusterIdval});
+  final int index;
+  const ClusterPasswordValidate({required this.password,required this.clusterIdval,required this.index});
+}
+
+class GetCategoriesList extends HomeScreenStateChangeEvent{
+  final String clusteridval;
+  final int index;
+  GetCategoriesList({required this.clusteridval,required this.index});
 }

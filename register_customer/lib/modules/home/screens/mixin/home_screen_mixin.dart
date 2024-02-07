@@ -13,6 +13,7 @@ mixin _HomeScreenMixin on State<HomeScreen>{
   TextEditingController priceController = TextEditingController();
   String total = '';
   List<ClusterModel> clusterList = [];
+  List<CategoryModel> categoryList=[];
 
   @override
   void initState() {

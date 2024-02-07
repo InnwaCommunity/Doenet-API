@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:register_customer/config/Sharef/share_pref.dart';
 import 'package:register_customer/constants/constants.dart';
+import 'package:register_customer/model/category_model.dart';
 import 'package:register_customer/model/clustermodel.dart';
 import 'package:register_customer/modules/home/repository/home_screen_repository.dart';
 
@@ -67,6 +68,7 @@ class HomeScreenStateManagementBloc extends Bloc<HomeScreenStateManagementEvent,
     on<ClusterPasswordValidate>((event, emit) async{
       String clusterIdval=event.clusterIdval;
       String password=event.password;
+      int index=event.index;
       var userInfo = await SharedPref.getStringList(key: shploginInfo);
         if (userInfo != null && userInfo.isNotEmpty) {
           String userId = userInfo[2];
@@ -74,7 +76,7 @@ class HomeScreenStateManagementBloc extends Bloc<HomeScreenStateManagementEvent,
           if (res != false) {
             var data=jsonDecode(res);
             if (data['error'] == 0) {
-              emit(PasswordCorrect());
+              emit(PasswordCorrect(index: index));
             }else{
               emit(PasswordFail(error: data['data']));
             }
@@ -83,6 +85,24 @@ class HomeScreenStateManagementBloc extends Bloc<HomeScreenStateManagementEvent,
           }
         }else{
           emit(const PasswordFail(error: 'UserId Incorrect'));
+        }
+    },);
+
+    on<GetCategoriesList>((event, emit) async{
+      String clusteridval=event.clusteridval;
+      int index=event.index;
+      var userInfo = await SharedPref.getStringList(key: shploginInfo);
+        if (userInfo != null && userInfo.isNotEmpty) {
+          String userId = userInfo[2];
+          var res = await homeScreenRepository.getCategoryList(userId, clusteridval);
+          if (res != false) {
+            var data=jsonDecode(res);
+            List<CategoryModel> categoryList =
+                (data as List).map((e) => CategoryModel.fromJson(e)).toList();
+            emit(LoadCategorySuccess(categoryList: categoryList,index: index));
+          }else{
+            emit(HomeScreenError(error: res));
+          }
         }
     },);
   }

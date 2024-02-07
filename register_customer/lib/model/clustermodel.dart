@@ -1,3 +1,5 @@
+import 'package:register_customer/model/category_model.dart';
+
 class ClusterModel{
   String? clusterIdval;
   String? clusterName;
@@ -9,9 +11,9 @@ class ClusterModel{
   bool? isVertify;
   String? createDate;
   int? numberOfMember;
+  List<CategoryModel>? categoryList;
 
   ClusterModel({
-    
     this.clusterIdval,
     this.clusterName,
     this.isPasswordUse,
@@ -22,6 +24,7 @@ class ClusterModel{
     this.isVertify,
     this.numberOfMember,
     this.createDate,
+    this.categoryList
   });
 
   factory ClusterModel.fromJson(Map<String, dynamic> json) {
@@ -35,7 +38,7 @@ class ClusterModel{
       isViewer: json['Viewer'],
       isEmployee: json['Employee'],
       isVertify: json['IsPasswordUse'] ? false : true,
-      createDate: json['CreateDate'],
+      createDate: json['CreateDate']
     );
   }
 

@@ -48,6 +48,12 @@ namespace TodoApi.Models
     public DbSet<Member> Members {get;set;} = null!;
     public DbSet<Collect> Collects {get;set;} = null!;
 
+    public DbSet<UseReport> UseReports{get;set;} = null!;
+
+    public DbSet<InviteMember> InviteMembers{get;set;} = null!;
+
+    public DbSet<Notification> Notifications{get;set;} = null!;
+
 
     public async Task<int> RunExecuteNonQuery(string Query, ExpandoObject queryFilter)
     {
@@ -89,6 +95,20 @@ namespace TodoApi.Models
       {
         var result = await conn.QueryAsync<T>(Query, queryFilter);
         return result.ToList();
+      }
+    }
+
+    public async Task<T> RunExecuteScalar<T>(string query, ExpandoObject? queryFilter = null)
+    {
+      using (var conn = new MySqlConnection(_connectionString))
+      {
+        if (queryFilter == null)
+        {
+          queryFilter = new ExpandoObject();
+        }
+        await conn.OpenAsync();
+
+        return await conn.ExecuteScalarAsync<T>(query, queryFilter);
       }
     }
   }

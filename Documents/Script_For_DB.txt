@@ -1,5 +1,45 @@
 
-CREATE TABLE tbl_cluster (
+CREATE TABLE tbl_hc_admin (
+    admin_id INT AUTO_INCREMENT PRIMARY KEY,
+    admin_name VARCHAR(50) NOT NULL,
+    admin_email VARCHAR(100) DEFAULT ''
+    login_name VARCHAR(50) NOT NULL,
+    login_fail_count INT DEFAULT 0,
+    password VARCHAR(50) NOT NULL,
+    salt VARCHAR(50) NOT NULL,
+    inactive BOOLEAN NOT NULL,
+    admin_level_id INT DEFAULT 1,
+    admin_photo VARCHAR(225) DEFAULT ''
+)
+ALTER TABLE tbl_hc_admin ADD user_id INT;
+ALTER TABLE tbl_hc_admin ADD isblock BOOLEAN DEFAULT FALSE;
+ALTER TABLE tbl_hc_admin ADD createdate DateTime;
+
+CREATE TABLE tbl_hc_adminlevel(
+    adminlevel_id INT AUTO_INCREMENT PRIMARY KEY,
+    adminlevel_name VARCHAR(50) NOT NULL
+)
+
+
+CREATE TABLE `tbl_ge_otp` (
+  `otpid` bigint NOT NULL AUTO_INCREMENT,
+  `emailphone` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '959xxxxxxxxx,xxxxx@gmail.com',
+  `loginname` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `passcode` varchar(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT 'G-xxxxxx',
+  `ipaddress` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `otptoken` varchar(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `senddatetime` datetime NOT NULL,
+  `failcount` int NOT NULL DEFAULT '0',
+  `retrycount` int NOT NULL DEFAULT '0',
+  `lastmodifieddate` datetime NOT NULL,
+  `createddate` datetime NOT NULL,
+  PRIMARY KEY (`otpid`),
+  UNIQUE KEY `phone_uniquekey` (`emailphone`,`loginname`),
+  KEY `phone_index` (`emailphone`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci;
+
+
+CREATE TABLE tbl_hc_cluster (
     cluster_id INT AUTO_INCREMENT PRIMARY KEY,
     cluster_name VARCHAR(100) NOT NULL,
     ispassword_use BOOLEAN,
@@ -10,7 +50,7 @@ CREATE TABLE tbl_cluster (
     cluster_modifie_date DATETIME
 );
 
-CREATE TABLE tbl_member (
+CREATE TABLE tbl_hc_member (
     member_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     cluster_id INT,
@@ -20,10 +60,12 @@ CREATE TABLE tbl_member (
     employee BOOLEAN,
     inactive BOOLEAN
 );
+ALTER TABLE tbl_hc_member ADD become_member_date DATETIME;
+ALTER TABLE tbl_hc_member  ADD member_name VARCHAR(50) DEFAULT '';
 
 
 
-CREATE TABLE tbl_category (
+CREATE TABLE tbl_hc_category (
     category_id INT AUTO_INCREMENT PRIMARY KEY,
     category_name VARCHAR(100) NOT NULL,
     cluster_id INT,
@@ -33,16 +75,17 @@ CREATE TABLE tbl_category (
     end_date DATETIME
 );
 
-CREATE TABLE tbl_usereport (
+CREATE TABLE tbl_hc_usereport (
     report_id INT AUTO_INCREMENT PRIMARY KEY,
     report_description VARCHAR(225) NOT NULL,
     use_amount INT,
     category_id INT,
     member_id INT,
-    report_date DATETIME
+    report_date DATETIME,
 );
+ALTER TABLE tbl_hc_usereport  ADD command_count INT DEFAULT 0;
 
-CREATE TABLE tbl_report_command (
+CREATE TABLE tbl_hc_report_command (
     command_id INT AUTO_INCREMENT PRIMARY KEY,
     command_description TEXT NOT NULL,
     create_date DATETIME,
@@ -50,7 +93,7 @@ CREATE TABLE tbl_report_command (
     commander_id INT
 );
 
-CREATE TABLE tbl_collect(
+CREATE TABLE tbl_hc_collect(
     collect_id INT AUTO_INCREMENT PRIMARY KEY,
     collect_description VARCHAR(225),
     owner_name VARCHAR(50) NOT NULL,
@@ -63,3 +106,40 @@ CREATE TABLE tbl_collect(
     collect_create_date DATETIME,
     collect_modified_date DATETIME
 );
+ALTER TABLE tbl_hc_collect  ADD command_count INT DEFAULT 0;
+
+CREATE TABLE tbl_hc_collect_command (
+    command_id INT AUTO_INCREMENT PRIMARY KEY,
+    command_description TEXT NOT NULL,
+    create_date DATETIME,
+    collect_id INT,
+    commander_id INT
+);
+
+
+CREATE TABLE tb_hc_notification
+(
+    noti_id INT AUTO_INCREMENT PRIMARY KEY,
+    noti_description VARCHAR(255) DEFAULT '',
+    noti_creator_id INT NOT NULL,
+    access_user_id INT NOT NULL,
+    is_seen BOOLEAN DEFAULT FALSE,
+    is_sent BOOLEAN DEFAULT FALSE,
+    create_date DATETIME NOT NULL
+);
+ALTER TABLE tb_hc_notification  ADD detail_id INT;
+ALTER TABLE tb_hc_notification  ADD noti_type VARCHAR(50) DEFAULT '';
+
+
+CREATE TABLE tbl_hc_invite_member
+(
+    invite_id INT AUTO_INCREMENT PRIMARY KEY,
+    cluster_id INT NOT NULL,
+    requester_id INT NOT NULL,
+    approver_id INT NOT NULL,
+    access BOOLEAN DEFAULT FALSE,
+    reject BOOLEAN DEFAULT FALSE,
+    create_date DATETIME NOT NULL
+);
+
+

@@ -43,7 +43,7 @@ namespace TodoApi
 
       services.AddSwaggerGen(c =>
       {
-        c.SwaggerDoc("v1", new OpenApiInfo { Title = "todoapi", Version = "v1" });
+        c.SwaggerDoc("v1", new OpenApiInfo { Title = "Happy Cooky", Version = "v1" });
       });
 
       services.AddSession(options =>   //use session for carry event log data like login, ip, etc.
@@ -68,7 +68,7 @@ namespace TodoApi
       {
         app.UseDeveloperExceptionPage();
         app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "todoapi v1"));
+        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Happy Cooky v1"));
       }
 
       app.UseHttpsRedirection();

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TodoApi.Models
 {
-  [Table("tbl_report_command")]
+  [Table("tbl_hc_report_command")]
   public class ReportCommand : BaseModel
   {
     [Column("command_id")]

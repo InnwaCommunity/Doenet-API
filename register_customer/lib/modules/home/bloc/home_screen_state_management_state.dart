@@ -39,9 +39,25 @@ class CreateClusterFail extends HomeScreenStateManagementState{
 }
 
 
-class PasswordCorrect extends HomeScreenStateManagementState{}
+class PasswordCorrect extends HomeScreenStateManagementState{
+  final int index;
+  const PasswordCorrect({required this.index});
+  @override
+  List<Object?> get props => [index];
+}
 
 class PasswordFail extends HomeScreenStateManagementState{
   final String error;
   const PasswordFail({required this.error});
+}
+
+class LoadCategorySuccess extends HomeScreenStateManagementState{
+  final List<CategoryModel> categoryList;
+  final int index;
+  const LoadCategorySuccess({required this.categoryList,required this.index});
+}
+
+class HomeScreenError extends HomeScreenStateManagementState{
+  final String error;
+  const HomeScreenError({required this.error});
 }

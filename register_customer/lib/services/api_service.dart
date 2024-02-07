@@ -22,6 +22,7 @@ class ApiService{
             LoginDataModel.fromJson(jsonDecode(response.body));
         accessToken = loginDataModel.accessToken ?? '';
       await SharedPref.setString(key: shpaccessToken, value: accessToken);
+    
       await SharedPref.setStringList(key: shploginInfo, value:[requestBody['username'],requestBody['email'],loginDataModel.userId ?? '', requestBody['password']] );
       return 'trueuser';
     }else if(response.statusCode == 400){

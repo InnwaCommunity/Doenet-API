@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:register_customer/config/Sharef/share_pref.dart';
 import 'package:register_customer/constants/constants.dart';
@@ -23,6 +25,7 @@ Route? makeRoute(Widget widget,RouteSettings settings){
 
   Future<String> getToken() async {
     String token= await SharedPref.getString(key: shpaccessToken) ?? '';
+    log(token);
     return token;
   }
 

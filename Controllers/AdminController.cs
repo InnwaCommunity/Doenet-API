@@ -77,8 +77,8 @@ namespace TodoApi.Controllers
 
 
 
-    [HttpPost]
-    public async Task<ActionResult<dynamic>> PostAdmin(AdminRequest adminRequest)
+    [HttpPost("CreateUserAccount", Name = "CreateUserAccount")]
+    public async Task<ActionResult<dynamic>> CreateUserAccount(AdminRequest adminRequest)
     {
       dynamic objresponse;
       try
@@ -96,12 +96,12 @@ namespace TodoApi.Controllers
           AdminPhoto = adminRequest.AdminPhoto,
           UserId=userIdAsInt,
           Inactive = false,
-          // IsBlock = false,
-          // CreateDate = System.DateTime.Now,
+          IsBlock = false,
+          CreateDate = System.DateTime.Now,
           // ModifiedDate = System.DateTime.Now
         };
         var password = adminRequest.Password;
-        if(adminRequest.AdminLevelId == null) newobj.AdminLevelId=1;
+        if(adminRequest.AdminLevelId == null) newobj.AdminLevelId=1;//set default 1
         bool check = await checkEmailUnique(adminRequest);
         if (check)
         {
@@ -146,8 +146,8 @@ namespace TodoApi.Controllers
       return objresponse;
     }
 
-    public async Task<bool> checkEmailUnique(AdminRequest adminRequest){
-      bool unique=false;
+    private async Task<bool> checkEmailUnique(AdminRequest adminRequest){
+      bool unique=true;
       string email=adminRequest.AdminEmail;
       var resultAdmin = await _repositoryWrapper.Admin.FindByConditionAsync(adm => adm.AdminEmail == email);
       if (resultAdmin==null || !resultAdmin.Any())
@@ -157,7 +157,28 @@ namespace TodoApi.Controllers
       return unique;
     }
 
+    [HttpPost("GetUserList", Name = "GetUserList")]
+    public async Task<ActionResult<dynamic>> GetUserList([FromBody] Newtonsoft.Json.Linq.JObject param)
+    {
+      dynamic objresponse;
+      dynamic obj=param;
+      int CurRow=obj.Cur_Row;
+      int limitRow=obj.limitRow;
+      string userName=obj.UserName;
+      string UserId=obj.UserId;
+      int loginUserId=int.Parse(UserId);
+      try
+      {
+        var response= await _repositoryWrapper.Admin.GetUserList(userName,CurRow,limitRow,loginUserId);
+        objresponse=response;
+      }
 
+      catch (Exception ex)
+      {
+        objresponse = new { data = ex.Message };
+      }
+      return objresponse;
+    }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAdmin(int id)

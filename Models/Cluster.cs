@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TodoApi.Models
 {
-  [Table("tbl_cluster")]
+  [Table("tbl_hc_cluster")]
   public class Cluster : BaseModel
   {
     [Column("cluster_id")]

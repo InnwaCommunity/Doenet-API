@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TodoApi.Models
 {
-  [Table("tbl_usereport")]
+  [Table("tbl_hc_usereport")]
   public class UseReport : BaseModel
   {
     [Column("report_id")]
@@ -20,12 +20,15 @@ namespace TodoApi.Models
     public int UseAmount { get; set; }
 
     [Column("category_id")]
-    public int ClusterId {get;set;}
+    public int CategoryId {get;set;}
 
     [Column("member_id")]
     public int MemberId{get;set;}
 
     [Column("report_date")]
     public DateTime ReportDate { get; set; }
+
+    [Column("command_count")]
+    public int Count { get; set; }
   }
 }

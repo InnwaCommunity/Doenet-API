@@ -158,5 +158,46 @@ namespace TodoApi.Repositories
         return oCollect;
       }
     }
+
+    private IUseReportRepository? oUseReport;
+    public IUseReportRepository UseReport
+    {
+      get
+      {
+        if (oUseReport==null)
+        {
+          oUseReport = new UseReportRepository(_repoContext);
+        }
+
+        return oUseReport;
+      }
+    }
+    
+    
+    private IInviteMemberRepository? oInviteMember;
+    public IInviteMemberRepository InviteMember
+    {
+      get
+      {
+        if (oInviteMember == null)
+        {
+          oInviteMember = new InviteMemberRepository(_repoContext);
+        }
+        return oInviteMember;
+      }
+    }
+    
+    private INotificationRepository? oNotification;
+    public INotificationRepository Notification
+    {
+      get
+      {
+        if (oNotification == null)
+        {
+          oNotification = new NotificationRepository(_repoContext);
+        }
+        return oNotification;
+      }
+    }
   }
 }
