@@ -1,0 +1,26 @@
+Next Function
+
+-Notification Function
+-Invite Member Function
+
+Success Status Code is 1
+Fail Status Code is 0
+
+
+
+How to be create Controller
+
+(1) Create Releated Table;
+(2) Setup in TodoContext.cs releated with this table;
+(3) build repository and irepository
+(4) setup settings in RepositoryWrapper and IRepositoryWrapper releated with repository
+
+
+mainQuery = mainQuery.GroupBy(x => x)
+                            .Where(group => group.Count() > 0)
+                            .Select(group => group.Key).Skip(curRow).Take(limitRow).ToList();
+
+
+
+KpiAssignId = Convert.ToInt32(Encryption.DecryptID(obj.AssignIDval.ToString(),LoginUserID.ToString()));
+AssignIDval = Encryption.EncryptID(cmt.KpiAssignId.ToString(), LoginUserID.ToString()), 

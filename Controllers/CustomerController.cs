@@ -142,7 +142,7 @@ namespace TodoApi.Controllers
     //   return CreatedAtAction(nameof(Getcustomer), new { id = customer.CustomerId }, customer);
     // }
 
-    [HttpPost]
+    [HttpPost("PostCustomer", Name = "PostCustomer")]
     public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
     {
       try

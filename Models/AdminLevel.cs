@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TodoApi.Models
 {
-  [Table("tbl_adminlevel")]
+  [Table("tbl_hc_adminlevel")]
   public partial class AdminLevel
   {
     [Column("adminlevel_id")]

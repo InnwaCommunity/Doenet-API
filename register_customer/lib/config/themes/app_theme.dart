@@ -51,6 +51,41 @@ class AppTheme {
 
   static const Color whiteSmokeColor = Color(0xFFF5F5F5);
   static const Color darkmodeBgColor = Color(0xFF151a30);
+
+
+  
+  static Widget datePickerComponent({required Widget child,required BuildContext context,Key? key,}){
+     return Theme(
+          key: key,
+          data: Theme.of(context).copyWith(
+            // textTheme: isDarkTheme(context) ? TextTheme(titleMedium: TextStyle(color: Theme.of(context).colorScheme.secondaryContainer)) : null,
+            colorScheme: ColorScheme.light(
+              primary: AppTheme.mainThemeColor, // header background
+              onPrimary: AppTheme.white, // header foreground
+              
+              onSurface: Theme.of(context)
+                  .colorScheme
+                  .secondaryContainer, // calendar text
+            ),
+            inputDecorationTheme: InputDecorationTheme(
+              border: const UnderlineInputBorder(),
+              labelStyle: TextStyle(color: Theme.of(context).colorScheme.secondaryContainer)
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context)
+                    .colorScheme
+                    .secondaryContainer, // button text color
+              ),
+            ),
+          ),
+          child: Localizations.override(
+            context: context,
+            locale: const Locale('en', 'US'),
+            child: child,
+          ),
+        );
+  }
 }
 
 class AppColors {
@@ -75,4 +110,5 @@ class AppColors {
   static const Color contentColorPink = Color(0xFFFF3AF2);
   static const Color contentColorRed = Color(0xFFE80054);
   static const Color contentColorCyan = Color(0xFF50E4FF);
+
 }

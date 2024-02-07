@@ -2065,7 +2065,6 @@ D:\Projects\Lite\training\bin\Debug\net6.0\TodoApi.exe
 D:\Projects\Lite\training\bin\Debug\net6.0\TodoApi.deps.json
 D:\Projects\Lite\training\bin\Debug\net6.0\TodoApi.runtimeconfig.json
 D:\Projects\Lite\training\bin\Debug\net6.0\TodoApi.dll
-D:\Projects\Lite\training\bin\Debug\net6.0\ref\TodoApi.dll
 D:\Projects\Lite\training\bin\Debug\net6.0\TodoApi.pdb
 D:\Projects\Lite\training\bin\Debug\net6.0\Azure.Core.dll
 D:\Projects\Lite\training\bin\Debug\net6.0\Azure.Identity.dll
@@ -2374,10 +2373,6 @@ D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\app\intermedi
 D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\app\intermediates\assets\debug\flutter_assets\languages\en-US.json
 D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\app\intermediates\assets\debug\flutter_assets\languages\my-MM.json
 D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\app\intermediates\compatible_screen_manifest\debug\output-metadata.json
-D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\app\intermediates\flutter\debug\flutter_assets\AssetManifest.json
-D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\app\intermediates\flutter\debug\flutter_assets\FontManifest.json
-D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\app\intermediates\flutter\debug\flutter_assets\languages\en-US.json
-D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\app\intermediates\flutter\debug\flutter_assets\languages\my-MM.json
 D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\app\intermediates\merged_manifests\debug\output-metadata.json
 D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\app\intermediates\merged_res_blame_folder\debug\out\multi-v2\debug.json
 D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\app\intermediates\merged_res_blame_folder\debug\out\multi-v2\values-af.json
@@ -2503,3 +2498,13 @@ D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\sqflite\inter
 D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\sqflite\intermediates\annotation_processor_list\debug\annotationProcessors.json
 D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\sqflite\intermediates\navigation_json\debug\navigation.json
 D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\sqflite\intermediates\packaged_manifests\debug\output-metadata.json
+D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\flutter_assets\AssetManifest.bin.json
+D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\flutter_assets\AssetManifest.json
+D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\flutter_assets\FontManifest.json
+D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\flutter_assets\languages\en-US.json
+D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\flutter_assets\languages\my-MM.json
+D:\Projects\Lite\training\bin\Debug\net6.0\ref\TodoApi.dll
+D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\app\intermediates\flutter\debug\flutter_assets\AssetManifest.json
+D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\app\intermediates\flutter\debug\flutter_assets\FontManifest.json
+D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\app\intermediates\flutter\debug\flutter_assets\languages\en-US.json
+D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\build\app\intermediates\flutter\debug\flutter_assets\languages\my-MM.json

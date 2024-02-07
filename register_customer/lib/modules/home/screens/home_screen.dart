@@ -9,7 +9,9 @@ import 'package:register_customer/config/routes/content_ext.dart';
 import 'package:register_customer/config/routes/routes.dart';
 import 'package:register_customer/config/themes/app_theme.dart';
 import 'package:register_customer/constants/font_size.dart';
+import 'package:register_customer/model/category_model.dart';
 import 'package:register_customer/model/clustermodel.dart';
+import 'package:register_customer/model/use_report_model.dart';
 import 'package:register_customer/modules/home/bloc/home_screen_state_management_bloc.dart';
 import 'package:register_customer/modules/home/repository/home_screen_repository.dart';
 part 'mixin/home_screen_mixin.dart';
@@ -192,13 +194,15 @@ class _HomeScreenState extends State<HomeScreen> with _HomeScreenMixin {
                               hintText: 'Confirm Password',
                               icon: Icon(Icons.edit)),
                           validator: (value) {
-                            if (value != null && passTextEdit.text != conTextEdit.text) {
+                            if (value != null &&
+                                passTextEdit.text != conTextEdit.text) {
                               return tr('Password is not match');
                             }
                             return null;
                           },
                           key: confirmKey,
-                          onChanged: (val) => confirmKey.currentState!.validate(),
+                          onChanged: (val) =>
+                              confirmKey.currentState!.validate(),
                         ),
                       ],
                     ),
@@ -238,58 +242,66 @@ class _HomeScreenState extends State<HomeScreen> with _HomeScreenMixin {
 
   Widget _bodyWidget() {
     return ListView.separated(
-        // shrinkWrap: true,
         itemBuilder: (context, index) {
-          return ExpansionTile(
-            // controller: expancontroller,
-            collapsedBackgroundColor: AppTheme.grey.withOpacity(.2),
-            iconColor: AppTheme.deactivatedText,
-            textColor: AppTheme.deactivatedText,
-            collapsedTextColor: AppTheme.deactivatedText,
-            collapsedIconColor: AppTheme.deactivatedText,
-            initiallyExpanded: false,
-            onExpansionChanged: (value) {
-              // log('onExpansionChanged $value');
-              // if (value && !clusterList[index].isVertify!) {
-              //   showDialog(
-              //       context: context,
-              //       builder: (context) {
-              //         return AlertDialog(
-              //           title: const Text('Need to vertify password'),
-              //           actions: [
-              //             TextButton(
-              //                 onPressed: () {
-              //                   Navigator.of(context).pop();
-              //                 },
-              //                 child: const Text('Confirm'))
-              //           ],
-              //         );
-              //       });
-              // }
+          return BlocConsumer<HomeScreenStateManagementBloc,
+              HomeScreenStateManagementState>(
+            listener: (context, state) {
+              if (state is PasswordCorrect) {
+                clusterList[state.index].isVertify = true;
+                BlocProvider.of<HomeScreenStateManagementBloc>(context).add(
+                    GetCategoriesList(
+                        clusteridval: clusterList[state.index].clusterIdval!,
+                        index: state.index));
+              }
+              if (state is LoadCategorySuccess) {
+                clusterList[state.index].categoryList = state.categoryList;
+              }
             },
-            title: Text(tr('Cluster')),
-            trailing: GestureDetector(
-              child: const Text(
-                'Details',
-                style: TextStyle(color: Colors.redAccent),
-              ),
-              onTap: () {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return const AlertDialog(
-                        title: Text('Sorry,Now Developing'),
-                      );
-                    });
-              },
-            ),
-            subtitle: Text(
-                '${clusterList[index].numberOfMember!.toString()} Members'),
-            children: [
-              clusterList[index].isVertify!
-                  ? _clusterListDetail(index)
-                  : _verifyPassword(index),
-            ],
+            builder: (context, state) {
+              return ExpansionTile(
+                collapsedBackgroundColor: AppTheme.grey.withOpacity(.2),
+                iconColor: AppTheme.deactivatedText,
+                textColor: AppTheme.deactivatedText,
+                collapsedTextColor: AppTheme.deactivatedText,
+                collapsedIconColor: AppTheme.deactivatedText,
+                initiallyExpanded: false,
+                onExpansionChanged: (value) {
+                  log('onExpansionChanged $value');
+                  if (value && clusterList[index].isVertify!) {
+                    BlocProvider.of<HomeScreenStateManagementBloc>(context).add(
+                        GetCategoriesList(
+                            clusteridval: clusterList[index].clusterIdval!,
+                            index: index));
+                  }
+                },
+                title: Text(clusterList[index].clusterName!),
+                trailing: GestureDetector(
+                  child: const Text(
+                    '...',
+                    style: TextStyle(color: Colors.redAccent),
+                  ),
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return const AlertDialog(
+                            title: Text('Sorry,Now Developing'),
+                          );
+                        });
+                  },
+                ),
+                subtitle: Text(
+                    '${clusterList[index].numberOfMember!.toString()} Members'),
+                children: [
+                  clusterList[index].isVertify!
+                      ? clusterList[index].categoryList == null ||
+                              clusterList[index].categoryList!.isEmpty
+                          ? _createCategoryWidget(index)
+                          : _clusterListDetail(index)
+                      : _verifyPassword(index),
+                ],
+              );
+            },
           );
         },
         separatorBuilder: (context, index) => const Divider(
@@ -298,15 +310,18 @@ class _HomeScreenState extends State<HomeScreen> with _HomeScreenMixin {
         itemCount: clusterList.length);
   }
 
-  Widget _verifyPassword(int index){
-    TextEditingController validatePassword=TextEditingController();
+  Widget _verifyPassword(int index) {
+    TextEditingController validatePassword = TextEditingController();
     GlobalKey<FormFieldState> validatePas = GlobalKey<FormFieldState>();
     return Padding(
       padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          const Text('This Cluster Type need to verify password',textAlign: TextAlign.start,),
+          const Text(
+            'This Cluster Type need to verify password',
+            textAlign: TextAlign.start,
+          ),
           Row(
             children: [
               Expanded(
@@ -316,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen> with _HomeScreenMixin {
                   decoration: const InputDecoration(
                     hintText: 'Entrer Password',
                   ),
-                  validator: (value){
+                  validator: (value) {
                     if (value == null && value!.isEmpty) {
                       return 'Please fill Something';
                     }
@@ -330,7 +345,8 @@ class _HomeScreenState extends State<HomeScreen> with _HomeScreenMixin {
                       BlocProvider.of<HomeScreenStateManagementBloc>(context)
                           .add(ClusterPasswordValidate(
                               password: validatePassword.text,
-                              clusterIdval: clusterList[index].clusterIdval!));
+                              clusterIdval: clusterList[index].clusterIdval!,
+                              index: index));
                     }
                   },
                   child: const Text('Verify'))
@@ -341,7 +357,129 @@ class _HomeScreenState extends State<HomeScreen> with _HomeScreenMixin {
     );
   }
 
-  Widget _clusterListDetail(int index) {
+  Widget _createCategoryWidget(int index) {
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.topRight,
+          child: TextButton(
+              onPressed: () {
+                context.toName(Routes.categoryform);
+              },
+              child: const Text('New Category')),
+        ),
+        const Text('There is no Category')
+      ],
+    );
+  }
+
+  Widget _clusterListDetail(int cateindex) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      child: ListView.separated(
+          itemBuilder: (context, index) {
+            CategoryModel newCategory =
+                clusterList[cateindex].categoryList![index];
+            return ExpansionTile(
+              collapsedBackgroundColor: AppTheme.grey.withOpacity(.2),
+              iconColor: AppTheme.deactivatedText,
+              textColor: AppTheme.deactivatedText,
+              collapsedTextColor: AppTheme.deactivatedText,
+              collapsedIconColor: AppTheme.deactivatedText,
+              initiallyExpanded: false,
+              title: Row(
+                children: [
+                  // Container(
+                  //   height: 10,
+                  //   width: 10,
+                  //   alignment: Alignment.topCenter,
+                  //   decoration: BoxDecoration(
+                      
+                  //     color: Colors.yellow,
+                  //   borderRadius: BorderRadius.circular(5)),),
+                  Text(newCategory.categoryName!),
+                  
+                ],
+              ),
+              trailing: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    newCategory.startDate.toString().split('T').first,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                  const Icon(Icons.arrow_drop_down),
+                  Text(
+                    newCategory.endDate.toString().split('T').first,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.black),
+                  )
+                ],
+              ),
+              subtitle: Row(
+                children: [
+                  Container(
+                    height: 30,
+                    width: 100,
+                    decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Center(
+                        child: Text(
+                      newCategory.total.toString(),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.black),
+                    )),
+                  ),
+                  const Icon(Icons.swipe_right_sharp),
+                  Container(
+                    height: 30,
+                    width: 100,
+                    decoration: BoxDecoration(
+                        color: Colors.orange,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Center(
+                        child: Text(
+                      newCategory.lastbalance.toString(),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.black),
+                    )),
+                  ),
+                ],
+              ),
+              children: [
+                // SingleChildScrollView(
+                //   child: CategoryDetails(categoryModel: newCategory),
+                // )
+                _categoryListDetail(newCategory),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child:GestureDetector(
+                    onTap: (){
+                      context.toName(Routes.categoryDetail,arguments: newCategory);
+                    },
+                    child:  Container(
+                    height: 30,width: 30,
+                    decoration: BoxDecoration(
+                      color: Colors.lightBlue,
+                      borderRadius: BorderRadius.circular(10)
+                      ),
+                      child: const Icon(Icons.arrow_right_alt),
+                  ),
+                  ))
+                ],
+            );
+          },
+          separatorBuilder: (context, index) => const Divider(
+                thickness: 0,
+              ),
+          itemCount: clusterList[cateindex].categoryList!.length),
+    );
+  }
+
+  Widget _categoryListDetail(CategoryModel newCat) {
+    double avausage = newCat.total! / newCat.usereportList!.length;
     return Container(
       margin: const EdgeInsets.all(5),
       // height: MediaQuery.of(context).size.height / 1.5,
@@ -357,101 +495,103 @@ class _HomeScreenState extends State<HomeScreen> with _HomeScreenMixin {
                 bottom: 10,
               ),
               child: LineChart(
-                index == 1 ? avgData() : mainData(),
-              ),
+                  // index == 1 ?
+                  // avgData(newCat.usereportList!,avausage)
+                  // : mainData(), //avgData//mainData
+                  mainData(newCat.usereportList!, avausage)),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                MaterialButton(
-                  minWidth: 40,
-                  height: 70,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
-                      side: const BorderSide(color: Colors.black)),
-                  onPressed: () {
-                    context.toName(Routes.totalhistory);
-                  },
-                  child: const Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text('Total'),
-                      // Text(
-                      //     '   ${SharedPref.getTotalBalance().toInt()}   ')
-                    ],
-                  ),
-                ),
-                MaterialButton(
-                  minWidth: 40,
-                  height: 70,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
-                      side: const BorderSide(color: Colors.black)),
-                  onPressed: () {},
-                  child: const Column(
-                    children: [Text('Total'), Text('123456789')],
-                  ),
-                ),
-                MaterialButton(
-                  minWidth: 40,
-                  height: 70,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
-                      side: const BorderSide(color: Colors.black)),
-                  onPressed: () {},
-                  child: const Column(
-                    children: [Text('Total'), Text('123456789')],
-                  ),
-                ),
-                MaterialButton(
-                    minWidth: 30,
-                    height: 45,
-                    color: Colors.blue,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                        side: const BorderSide(color: Colors.red)),
-                    onPressed: () {
-                      addItem();
-                    },
-                    child: const Icon(Icons.add)),
-              ],
-            ),
-          ),
-          const Divider(
-            thickness: 1,
-            height: 30,
-          ),
-          const Padding(
-            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('ItemName'),
-                Text('Prices'),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-            child: SizedBox(
-              height: 100,
-              child: ListView.separated(
-                  // shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [Text('Computer'), Text('2000123')],
-                    );
-                  },
-                  separatorBuilder: (context, index) => const Divider(
-                        thickness: 1,
-                      ),
-                  itemCount: 3),
-            ),
-          )
+          // Padding(
+          //   padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: [
+          //       MaterialButton(
+          //         minWidth: 40,
+          //         height: 70,
+          //         shape: RoundedRectangleBorder(
+          //             borderRadius: BorderRadius.circular(50),
+          //             side: const BorderSide(color: Colors.black)),
+          //         onPressed: () {
+          //           context.toName(Routes.totalhistory);
+          //         },
+          //         child: const Column(
+          //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //           children: [
+          //             Text('Total'),
+          //             // Text(
+          //             //     '   ${SharedPref.getTotalBalance().toInt()}   ')
+          //           ],
+          //         ),
+          //       ),
+          //       MaterialButton(
+          //         minWidth: 40,
+          //         height: 70,
+          //         shape: RoundedRectangleBorder(
+          //             borderRadius: BorderRadius.circular(50),
+          //             side: const BorderSide(color: Colors.black)),
+          //         onPressed: () {},
+          //         child: const Column(
+          //           children: [Text('Total'), Text('123456789')],
+          //         ),
+          //       ),
+          //       MaterialButton(
+          //         minWidth: 40,
+          //         height: 70,
+          //         shape: RoundedRectangleBorder(
+          //             borderRadius: BorderRadius.circular(50),
+          //             side: const BorderSide(color: Colors.black)),
+          //         onPressed: () {},
+          //         child: const Column(
+          //           children: [Text('Total'), Text('123456789')],
+          //         ),
+          //       ),
+          //       MaterialButton(
+          //           minWidth: 30,
+          //           height: 45,
+          //           color: Colors.blue,
+          //           shape: RoundedRectangleBorder(
+          //               borderRadius: BorderRadius.circular(50),
+          //               side: const BorderSide(color: Colors.red)),
+          //           onPressed: () {
+          //             addItem();
+          //           },
+          //           child: const Icon(Icons.add)),
+          //     ],
+          //   ),
+          // ),
+          // const Divider(
+          //   thickness: 1,
+          //   height: 30,
+          // ),
+          // const Padding(
+          //   padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: [
+          //       Text('ItemName'),
+          //       Text('Prices'),
+          //     ],
+          //   ),
+          // ),
+          // Padding(
+          //   padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+          //   child: SizedBox(
+          //     height: 100,
+          //     child: ListView.separated(
+          //         // shrinkWrap: true,
+          //         itemBuilder: (context, index) {
+          //           return const Row(
+          //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //             children: [Text('Computer'), Text('2000123')],
+          //           );
+          //         },
+          //         separatorBuilder: (context, index) => const Divider(
+          //               thickness: 1,
+          //             ),
+          //         itemCount: 3),
+          //   ),
+          // )
         ],
       ),
     );
@@ -584,8 +724,14 @@ class _HomeScreenState extends State<HomeScreen> with _HomeScreenMixin {
     return Text(text, style: style, textAlign: TextAlign.left);
   }
 
-  LineChartData mainData() {
+  LineChartData mainData(List<UseReport> useRepList, double avaUsage) {
+    List<FlSpot> spots=[];
+    for (var i = 0; i < useRepList.length; i++) {
+      FlSpot newspot=FlSpot(i.toDouble(), useRepList[i].useAmount!.toDouble());
+      spots.add(newspot);
+    }
     return LineChartData(
+      backgroundColor: Colors.blue,
       gridData: FlGridData(
         show: true,
         drawVerticalLine: true,
@@ -604,74 +750,64 @@ class _HomeScreenState extends State<HomeScreen> with _HomeScreenMixin {
           );
         },
       ),
-      titlesData: const FlTitlesData(
+      titlesData: FlTitlesData(
         show: true,
-        rightTitles: AxisTitles(
+        rightTitles: const AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
-        topTitles: AxisTitles(
+        topTitles: const AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
         bottomTitles: AxisTitles(
+          // axisNameWidget: Text('Daily Usages'),
           sideTitles: SideTitles(
             showTitles: true,
-            reservedSize: 30,
-            interval: 2,
-            // getTitlesWidget: bottomTitleWidgets,
+            reservedSize: 50,
+            interval: 5,
+            getTitlesWidget: (value, meta) {
+              int index = 0;
+              if (value.toInt() > 0) {
+                index = value.toInt();
+              }
+              if (index >= 0 && index < useRepList.length) {
+                String text = useRepList[index].reportDate!;
+                return Column(
+                  children: [
+                    Text(text.split('-').last,style: const TextStyle(fontSize: 10),),
+                    Text(text.split('-')[1],style: const TextStyle(fontSize: 10),),
+                    Text(text.split('-').first,style: const TextStyle(fontSize: 10),),
+                  ],
+                );
+              } else {
+                return const Text('');
+              }
+            },
           ),
         ),
-        // leftTitles: AxisTitles(
-        //   sideTitles: SideTitles(
-        //     showTitles: true,
-        //     interval: 1,
-        //     getTitlesWidget: leftTitleWidgets,
-        //     reservedSize: 42,
-        //   ),
-        // ),
+        leftTitles: const AxisTitles(
+          // axisNameWidget: Text('Average Usage'),
+          // drawBelowEverything: false,
+          // axisNameSize: 16,
+          sideTitles: SideTitles(
+            showTitles: true,
+            interval: 2000,
+            // getTitlesWidget: leftTitleWidgets,
+            reservedSize: 42,
+          ),
+        ),
       ),
       borderData: FlBorderData(
         show: true,
         border: Border.all(color: const Color(0xff37434d)),
       ),
-      minX: 1,
-      maxX: 31,
+      minX: 0,
+      maxX: useRepList.length.toDouble(),
       minY: 0,
-      maxY: 6,
+      maxY: avaUsage,
+    
       lineBarsData: [
         LineChartBarData(
-          spots: const [
-            FlSpot(1, 3),
-            FlSpot(2, 2),
-            FlSpot(3, 5),
-            FlSpot(4, 3.1),
-            FlSpot(5, 4),
-            FlSpot(6, 3),
-            FlSpot(7, 4),
-            FlSpot(8, 4),
-            FlSpot(9.5, 3),
-            FlSpot(10, 3),
-            FlSpot(11, 3),
-            FlSpot(12.6, 2),
-            FlSpot(13.9, 5),
-            FlSpot(14.8, 3.1),
-            FlSpot(15, 4),
-            FlSpot(16, 3),
-            FlSpot(17, 4),
-            FlSpot(18, 4),
-            FlSpot(19.5, 3),
-            FlSpot(20, 3),
-            FlSpot(21, 3),
-            FlSpot(22.6, 2),
-            FlSpot(23.9, 5),
-            FlSpot(24.8, 3.1),
-            FlSpot(25, 4),
-            FlSpot(26, 3),
-            FlSpot(27, 4),
-            FlSpot(28, 4),
-            FlSpot(29.5, 3),
-            FlSpot(30, 3),
-            FlSpot(31, 3),
-          ],
+          spots: spots,
           isCurved: true,
           gradient: LinearGradient(
             colors: gradientColors,
@@ -694,7 +830,14 @@ class _HomeScreenState extends State<HomeScreen> with _HomeScreenMixin {
     );
   }
 
-  LineChartData avgData() {
+  LineChartData avgData(List<UseReport> useRepList, double avaUsage) {
+    List<FlSpot> spots = useRepList.map((report) {
+      // Convert the reportDate to a numeric value, for example, the day of the month
+      int dayOfMonth = int.parse(report.reportDate!.split('-')[2]);
+
+      // Return an FlSpot object
+      return FlSpot(dayOfMonth.toDouble(), report.useAmount!.toDouble());
+    }).toList();
     return LineChartData(
       lineTouchData: const LineTouchData(enabled: false),
       gridData: FlGridData(
@@ -721,7 +864,7 @@ class _HomeScreenState extends State<HomeScreen> with _HomeScreenMixin {
           sideTitles: SideTitles(
             showTitles: true,
             reservedSize: 30,
-            // getTitlesWidget: bottomTitleWidgets,
+            // getTitlesWidget:
             interval: 2,
           ),
         ),
@@ -745,44 +888,45 @@ class _HomeScreenState extends State<HomeScreen> with _HomeScreenMixin {
         border: Border.all(color: const Color(0xff37434d)),
       ),
       minX: 1,
-      maxX: 31,
+      maxX: useRepList.length.toDouble(),
       minY: 0,
-      maxY: 6,
+      maxY: avaUsage,
       lineBarsData: [
         LineChartBarData(
-          spots: const [
-            FlSpot(1, 3),
-            FlSpot(2, 2),
-            FlSpot(3, 5),
-            FlSpot(4, 3.1),
-            FlSpot(5, 4),
-            FlSpot(6, 3),
-            FlSpot(7, 4),
-            FlSpot(8, 4),
-            FlSpot(9.5, 3),
-            FlSpot(10, 3),
-            FlSpot(11, 3),
-            FlSpot(12.6, 2),
-            FlSpot(13.9, 5),
-            FlSpot(14.8, 3.1),
-            FlSpot(15, 4),
-            FlSpot(16, 3),
-            FlSpot(17, 4),
-            FlSpot(18, 4),
-            FlSpot(19.5, 3),
-            FlSpot(20, 3),
-            FlSpot(21, 3),
-            FlSpot(22.6, 2),
-            FlSpot(23.9, 5),
-            FlSpot(24.8, 3.1),
-            FlSpot(25, 4),
-            FlSpot(26, 3),
-            FlSpot(27, 4),
-            FlSpot(28, 4),
-            FlSpot(29.5, 3),
-            FlSpot(30, 3),
-            FlSpot(31, 3),
-          ],
+          spots: spots,
+          // const [
+          //   FlSpot(1, 3),
+          //   FlSpot(2, 2),
+          //   FlSpot(3, 5),
+          //   FlSpot(4, 3.1),
+          //   FlSpot(5, 4),
+          //   FlSpot(6, 3),
+          //   FlSpot(7, 4),
+          //   FlSpot(8, 4),
+          //   FlSpot(9.5, 3),
+          //   FlSpot(10, 3),
+          //   FlSpot(11, 3),
+          //   FlSpot(12.6, 2),
+          //   FlSpot(13.9, 5),
+          //   FlSpot(14.8, 3.1),
+          //   FlSpot(15, 4),
+          //   FlSpot(16, 3),
+          //   FlSpot(17, 4),
+          //   FlSpot(18, 4),
+          //   FlSpot(19.5, 3),
+          //   FlSpot(20, 3),
+          //   FlSpot(21, 3),
+          //   FlSpot(22.6, 2),
+          //   FlSpot(23.9, 5),
+          //   FlSpot(24.8, 3.1),
+          //   FlSpot(25, 4),
+          //   FlSpot(26, 3),
+          //   FlSpot(27, 4),
+          //   FlSpot(28, 4),
+          //   FlSpot(29.5, 3),
+          //   FlSpot(30, 3),
+          //   FlSpot(31, 3),
+          // ],
           isCurved: true,
           gradient: LinearGradient(
             colors: [

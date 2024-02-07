@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:register_customer/model/category_model.dart';
 import 'package:register_customer/modules/customer/bloc/customer_screen_state_manage_bloc.dart';
 import 'package:register_customer/modules/customer/repository/customer_repository.dart';
 import 'package:register_customer/modules/customer/screens/customer_screen.dart';
+import 'package:register_customer/modules/home/bloc/category_create_form_state_management_bloc.dart';
 import 'package:register_customer/modules/home/bloc/home_screen_state_management_bloc.dart';
 import 'package:register_customer/modules/home/repository/home_screen_repository.dart';
+import 'package:register_customer/modules/home/screens/category_create_form.dart';
+import 'package:register_customer/modules/home/screens/category_details.dart';
 import 'package:register_customer/modules/home/screens/home_screen.dart';
 import 'package:register_customer/modules/sign%20in/bloc/login_bloc.dart';
 import 'package:register_customer/modules/sign%20in/repository/login_repository.dart';
@@ -25,9 +29,11 @@ class Routes {
   static const addTotalBalance = 'addTotalBalance';
   static const totalhistory = 'totalhistory';
   static const addMenuItem = 'addMenuItem';
+  static const categoryform= 'categoryform';
+  static const categoryDetail = 'categoryDetail';
 
   static Route<dynamic>? routeGenerator(RouteSettings settings) {
-    // final argument=settings.arguments;
+    final argument=settings.arguments;
     switch (settings.name) {
       case '/':
         return makeRoute(
@@ -72,6 +78,18 @@ class Routes {
             ),
             settings);
 
+      case Routes.categoryform:
+        return makeRoute(
+            BlocProvider(
+              create: (context) => CategoryCreateFormStateManagementBloc(),
+              child: const CategoryCreateForm(),
+            ),
+            settings);
+
+      case Routes.categoryDetail:
+        return makeRoute(
+            CategoryDetails(categoryModel: argument as CategoryModel),
+            settings);
       
       case 'addTotalBalance':
         // return makeRoute(

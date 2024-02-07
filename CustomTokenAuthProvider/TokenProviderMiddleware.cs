@@ -78,7 +78,7 @@ namespace TodoApi.CustomTokenAuthProvider
           context.Request.Path.ToString().ToLower().Contains("forgotpassword/requestbyemail") ||
           context.Request.Path.ToString().ToLower().Contains("forgotpassword/changepasswordbyotp") ||
           context.Request.Path.ToString().ToLower().Contains("swagger/")||
-          context.Request.Path.ToString().ToLower().Contains("/api/admin")
+          context.Request.Path.ToString().ToLower().Contains("/api/admin/createuseraccount")
       )
       {
         await next(context);

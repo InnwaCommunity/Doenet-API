@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace TodoApi.Models
 {
-  [Table("tbl_collect")]
+  [Table("tbl_hc_collect")]
   public class Collect : BaseModel
   {
     [Column("collect_id")]
@@ -29,13 +29,17 @@ namespace TodoApi.Models
     [Column("category_id")]
     public int CategoryId {get;set;}
 
-    [Column("cluster_id")]
-    public int ClusterId {get;set;}
+    // [Column("cluster_id")]
+    // public int ClusterId {get;set;}
 
     [Column("collect_create_date")]
     public DateTime CreateDate {get;set;}
 
     [Column("modified_date")]
     public DateTime ModifiedDate {get;set;}
+
+    
+    [Column("command_count")]
+    public int Count { get; set; }
   }
 }

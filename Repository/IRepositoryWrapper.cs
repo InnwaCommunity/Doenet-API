@@ -20,5 +20,11 @@
 
     ICollectRepository Collect {get;}
 
+    IUseReportRepository UseReport {get;}
+
+    IInviteMemberRepository InviteMember {get;}
+
+    INotificationRepository Notification {get;}
+
   }
 }
