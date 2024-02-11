@@ -2059,8 +2059,6 @@ D:\Projects\Lite\training\bin\Debug\net6.0\appsettings.Development.json
 D:\Projects\Lite\training\bin\Debug\net6.0\appsettings.json
 D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\ios\Runner\Assets.xcassets\AppIcon.appiconset\Contents.json
 D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\ios\Runner\Assets.xcassets\LaunchImage.imageset\Contents.json
-D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\macos\Runner\Assets.xcassets\AppIcon.appiconset\Contents.json
-D:\Projects\Lite\training\bin\Debug\net6.0\register_customer\web\manifest.json
 D:\Projects\Lite\training\bin\Debug\net6.0\TodoApi.exe
 D:\Projects\Lite\training\bin\Debug\net6.0\TodoApi.deps.json
 D:\Projects\Lite\training\bin\Debug\net6.0\TodoApi.runtimeconfig.json

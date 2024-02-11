@@ -19,6 +19,9 @@ namespace TodoApi.Models
     [Column("approver_id")]
     public int ApproverId { get; set; }
 
+    [Column("position")]
+    public string Position { get; set; } = string.Empty;
+
     [Column("access")]
     public bool Access {get;set;}
 

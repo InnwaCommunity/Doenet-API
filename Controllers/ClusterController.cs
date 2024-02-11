@@ -58,7 +58,6 @@ namespace TodoApi.Controllers
                     if (cluster != null)
                     {
                         clusterdata = cluster;
-                        return clusterdata;
                     }
                     else
                     {
@@ -103,15 +102,17 @@ namespace TodoApi.Controllers
                     // await _repositoryWrapper.Category.CreateAsync(catobj);
                     // await _repositoryWrapper.EventLog.Insert(catobj);
                     var user= await _repositoryWrapper.Admin.FindByIDAsync(UserId);
+                    string? memName=user?.AdminName;
                     var member = new Member
                     {
                         UserId = UserId,
-                        MemberName=user?.AdminName ?? "",
+                        MemberName=memName ?? "",
                         ClusterId = cluster.ClusterId,
                         Admin = true,
                         Commander = true,
                         Viewer = true,
                         Employee = true,
+                        MemberDate = System.DateTime.Now,
                         Inactive = false
                     };
                     Validator.ValidateObject(member, new ValidationContext(member), true);

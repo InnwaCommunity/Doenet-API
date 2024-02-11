@@ -33,7 +33,8 @@ namespace TodoApi.Repositories
 
       dynamic parameters = new ExpandoObject();
       parameters.username = username;
-      string query = "SELECT admin_id as UserId,admin_name as UserName FROM tbl_hc_admin WHERE admin_name LIKE CONCAT(@username, '%') ORDER BY admin_name ASC;";
+      parameters.loginUserid=loginUserid;
+      string query = "SELECT admin_id as UserId,admin_name as UserName FROM tbl_hc_admin WHERE admin_name LIKE CONCAT(@username, '%') AND admin_id != @loginUserid ORDER BY admin_name ASC;";
 
       dynamic userList = await RepositoryContext.RunExecuteSelectQuery<dynamic>(query, parameters);
       List<dynamic> mainQuery = new List<dynamic>();
