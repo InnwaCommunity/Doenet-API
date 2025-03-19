@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "LJhMSls9WVK8cecZU8bV2TTJ6P0exMHwydSss7zun2DamN9TF5VgvaeDtoZZPSAIgMAtjBwQECbxwLA8UrG2jQ==",
+  "dgSpecHash": "3EFy1VxMXyM=",
   "success": true,
-  "projectFilePath": "D:\\Projects\\Lite\\training\\TodoApi.csproj",
+  "projectFilePath": "C:\\NCM\\Dotnet\\Personal\\Doenet-API\\TodoApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\KTZ Myanmar Group 2\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\KTZ Myanmar Group 2\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",
@@ -216,7 +216,11 @@
     "C:\\Users\\KTZ Myanmar Group 2\\.nuget\\packages\\system.threading.timer\\4.3.0\\system.threading.timer.4.3.0.nupkg.sha512",
     "C:\\Users\\KTZ Myanmar Group 2\\.nuget\\packages\\system.windows.extensions\\5.0.0\\system.windows.extensions.5.0.0.nupkg.sha512",
     "C:\\Users\\KTZ Myanmar Group 2\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
-    "C:\\Users\\KTZ Myanmar Group 2\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512"
+    "C:\\Users\\KTZ Myanmar Group 2\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512",
+    "C:\\Users\\KTZ Myanmar Group 2\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.36\\microsoft.netcore.app.ref.6.0.36.nupkg.sha512",
+    "C:\\Users\\KTZ Myanmar Group 2\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.36\\microsoft.windowsdesktop.app.ref.6.0.36.nupkg.sha512",
+    "C:\\Users\\KTZ Myanmar Group 2\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.36\\microsoft.aspnetcore.app.ref.6.0.36.nupkg.sha512",
+    "C:\\Users\\KTZ Myanmar Group 2\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.36\\microsoft.netcore.app.host.win-x64.6.0.36.nupkg.sha512"
   ],
   "logs": []
 }
